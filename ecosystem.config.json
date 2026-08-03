@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "external",
+      "script": "index.js",
+      "combine_logs": true,
+      "env_production": {
+        "watch": false,
+        "instances": "max",
+        "exec_mode": "cluster"
+      }
+    }
+  ]
+}

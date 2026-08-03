@@ -1,0 +1,36 @@
+{% extends 'layout.njk' %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">Info</h1>
+
+  <h2 class="govuk-heading-m">Notify</h2>
+  <p>{{ notifyData }}</p>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+  <h2 class="govuk-heading-m">{{ appData.name }}</h2>
+  {{ govukSummaryList({
+    classes: 'govuk-summary-list--no-border',
+    rows: [
+      {
+        key: {
+          text: "Version"
+        },
+        value: {
+          text: appData.version
+        }
+      },
+      {
+        key: {
+          text: "Commit hash"
+        },
+        value: {
+          text: appData.commit
+        }
+      }
+    ]
+  }) }}
+{% endblock %}

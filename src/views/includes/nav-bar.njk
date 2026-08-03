@@ -1,0 +1,26 @@
+<!-- navigation pattern -->
+<div class="nav-container navbarWhite">
+  <nav id="nav" class="navbar govuk-width-container ">
+    <ul class="navbar__list">
+      <li class="navbar__item">
+        <a class="navbar__link govuk-link--no-visited-state {{ 'navbar__link--active' if activeNavBar not in ['manage-returns', 'manage-access'] }}" href="/licences" id="nav-licences">
+          View licences
+        </a>
+      </li>
+      {% if auth.permission.manageReturns %}
+        <li class="navbar__item">
+          <a class="navbar__link govuk-link--no-visited-state {{ 'navbar__link--active' if activeNavBar === 'manage-returns' }}" href="/returns" id="nav-manage-returns">
+            Manage returns
+          </a>
+        </li>
+      {% endif %}
+      {% if auth.permission.manageAccess %}
+        <li class="navbar__item">
+          <a class="navbar__link govuk-link--no-visited-state {{ 'navbar__link--active' if activeNavBar === 'manage-access' }}" href="/manage_licences" id="nav-manage-access">
+            Add licences or give access
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>

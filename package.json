@@ -1,0 +1,56 @@
+{
+  "name": "water-abstraction-external",
+  "version": "1.0.0",
+  "description": "External facing web app for the Water Abstraction Resource Licencing service",
+  "homepage": "https://github.com/DEFRA/water-abstraction-external",
+  "author": "Water service team",
+  "license": "OGL-UK-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DEFRA/water-abstraction-external"
+  },
+  "type": "module",
+  "main": "index.js",
+  "prettier": "water-abstraction-engine/prettierrc",
+  "scripts": {
+    "build": "bin/build",
+    "docs": "jsdoc -c .jsdoc.json",
+    "lint": "eslint .",
+    "migrate": "water-knex migrate:latest",
+    "migrate:test": "NODE_ENV=test node node_modules/water-abstraction-engine/db/wipe.database.js && NODE_ENV=test water-knex migrate:latest",
+    "migrate:wipe": "NODE_ENV=test node node_modules/water-abstraction-engine/db/wipe.database.js",
+    "rollback": "water-knex migrate:rollback",
+    "rollback:test": "NODE_ENV=test water-knex migrate:rollback",
+    "rollback:all": "water-knex migrate:rollback --all",
+    "rollback:all:test": "NODE_ENV=test water-knex migrate:rollback --all",
+    "scaffold": "scaffold",
+    "start": "node index.js",
+    "test": "NODE_ENV=test TZ=UTC vitest run",
+    "test:coverage": "NODE_ENV=test TZ=UTC vitest run --coverage",
+    "version": "npx --yes auto-changelog -p --commit-limit false && git add CHANGELOG.md",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "sass": "^1.101.3",
+    "water-abstraction-engine": "github:DEFRA/water-abstraction-engine#main"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-jsdoc": "^63.1.0",
+    "eslint-plugin-prettier": "^5.5.6",
+    "jsdoc": "^4.0.5",
+    "neostandard": "^0.13.0",
+    "pino-pretty": "^13.1.1",
+    "prettier": "3.9.6",
+    "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true,
+    "unrs-resolver@1.12.2": true,
+    "fsevents@2.3.3": true
+  }
+}
