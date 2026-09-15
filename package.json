@@ -1,6 +1,6 @@
 {
   "name": "water-abstraction-external",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "External facing web app for the Water Abstraction Resource Licencing service",
   "homepage": "https://github.com/DEFRA/water-abstraction-external",
   "author": "Water service team",
