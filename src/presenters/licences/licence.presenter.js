@@ -16,8 +16,8 @@ export default function licencePresenter(licence) {
   const { licenceDocumentHeader, licenceRef } = licence
 
   return {
-    endDate: _endDate(licence),
     effectiveFrom: _effectiveFrom(licence),
+    endDate: _endDate(licence),
     licenceName: _licenceName(licenceDocumentHeader),
     pageTitle: `Licence ${licenceRef}`
   }

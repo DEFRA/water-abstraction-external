@@ -24,8 +24,6 @@ describe('Licences - View Licence Service', () => {
         scope: ['primary_user'],
         user: {
           id: generateUUID(),
-          licenceEntityId: generateUUID(),
-          username: 'external@example.co.uk',
           licenceEntity: {
             id: generateUUID(),
             licenceEntityRoles: [
@@ -35,7 +33,9 @@ describe('Licences - View Licence Service', () => {
                 role: 'primary_user'
               }
             ]
-          }
+          },
+          licenceEntityId: generateUUID(),
+          username: 'external@example.co.uk'
         }
       }
     }
@@ -45,16 +45,16 @@ describe('Licences - View Licence Service', () => {
       id: generateUUID(),
       issueDate: new Date('2022-04-02'),
       lapsedDate: null,
-      licenceRef: generateLicenceRef(),
-      startDate: new Date('2022-04-01'),
-      revokedDate: null,
       licenceDocumentHeader: {
         companyEntityId: auth.credentials.user.licenceEntity.licenceEntityRoles[0].companyEntityId,
         current: 'true',
         deletedAt: null,
-        licenceName: 'Test Licence',
-        id: generateUUID()
-      }
+        id: generateUUID(),
+        licenceName: 'Test Licence'
+      },
+      licenceRef: generateLicenceRef(),
+      revokedDate: null,
+      startDate: new Date('2022-04-01')
     })
 
     vi.spyOn(FetchLicenceDal, 'default').mockResolvedValue(licence)
@@ -70,8 +70,8 @@ describe('Licences - View Licence Service', () => {
         const result = await ViewLicenceService(licence.id, auth)
 
         expect(result).toEqual({
-          endDate: '',
           effectiveFrom: formatLongDate(licence.issueDate),
+          endDate: '',
           licenceName: licence.licenceDocumentHeader.licenceName,
           pageTitle: `Licence ${licence.licenceRef}`
         })

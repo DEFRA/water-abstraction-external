@@ -24,10 +24,10 @@ export default async function viewInfoService() {
   const notifyData = await _notifyData()
 
   return {
-    pageTitle: 'Info',
-    pageTitleCaption: 'Service information',
     appData,
-    notifyData
+    notifyData,
+    pageTitle: 'Info',
+    pageTitleCaption: 'Service information'
   }
 }
 

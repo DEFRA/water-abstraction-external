@@ -33,13 +33,13 @@ describe('Health - View Info Service', () => {
   describe('when the request to Notify is successful', () => {
     beforeEach(() => {
       notifyData = {
-        succeeded: true,
         response: {
-          statusCode: 200,
           body: {
             message: 'alive'
-          }
-        }
+          },
+          statusCode: 200
+        },
+        succeeded: true
       }
 
       vi.spyOn(NotifyViewHealthRequest, 'default').mockResolvedValue(notifyData)
@@ -49,10 +49,10 @@ describe('Health - View Info Service', () => {
       const result = await ViewInfoService()
 
       expect(result).toEqual({
-        pageTitle: 'Info',
-        pageTitleCaption: 'Service information',
         appData,
-        notifyData: 'Up and running'
+        notifyData: 'Up and running',
+        pageTitle: 'Info',
+        pageTitleCaption: 'Service information'
       })
     })
   })
@@ -61,13 +61,13 @@ describe('Health - View Info Service', () => {
     describe('though the response contains a status code', () => {
       beforeEach(() => {
         notifyData = {
-          succeeded: false,
           response: {
-            statusCode: 500,
             body: {
               message: 'Internal Server Error'
-            }
-          }
+            },
+            statusCode: 500
+          },
+          succeeded: false
         }
 
         vi.spyOn(NotifyViewHealthRequest, 'default').mockResolvedValue(notifyData)
@@ -77,10 +77,10 @@ describe('Health - View Info Service', () => {
         const result = await ViewInfoService()
 
         expect(result).toEqual({
-          pageTitle: 'Info',
-          pageTitleCaption: 'Service information',
           appData,
-          notifyData: 'ERROR: 500 - Internal Server Error'
+          notifyData: 'ERROR: 500 - Internal Server Error',
+          pageTitle: 'Info',
+          pageTitleCaption: 'Service information'
         })
       })
     })
@@ -89,11 +89,11 @@ describe('Health - View Info Service', () => {
   describe('but the response does not contain a status code', () => {
     beforeEach(() => {
       notifyData = {
-        succeeded: false,
         response: {
-          name: 'NetworkError',
-          message: 'Failed to fetch'
-        }
+          message: 'Failed to fetch',
+          name: 'NetworkError'
+        },
+        succeeded: false
       }
 
       vi.spyOn(NotifyViewHealthRequest, 'default').mockResolvedValue(notifyData)
@@ -103,10 +103,10 @@ describe('Health - View Info Service', () => {
       const result = await ViewInfoService()
 
       expect(result).toEqual({
-        pageTitle: 'Info',
-        pageTitleCaption: 'Service information',
         appData,
-        notifyData: 'ERROR: NetworkError - Failed to fetch'
+        notifyData: 'ERROR: NetworkError - Failed to fetch',
+        pageTitle: 'Info',
+        pageTitleCaption: 'Service information'
       })
     })
   })

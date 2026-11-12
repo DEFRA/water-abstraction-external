@@ -26,7 +26,7 @@ export default async function authService(_request, session) {
   const scope = _scope(user, company.id)
   const permission = _permission(scope)
 
-  return { isValid: !!user, credentials: { permission, scope, user } }
+  return { credentials: { permission, scope, user }, isValid: !!user }
 }
 
 function _permission(scope) {

@@ -19,16 +19,16 @@ describe('Licences - Licence Presenter', () => {
       id: generateUUID(),
       issueDate: new Date('2022-04-02'),
       lapsedDate: null,
-      licenceRef: generateLicenceRef(),
-      startDate: new Date('2022-04-01'),
-      revokedDate: null,
       licenceDocumentHeader: {
         companyEntityId: generateUUID(),
         current: 'true',
         deletedAt: null,
-        licenceName: 'Test Licence',
-        id: generateUUID()
-      }
+        id: generateUUID(),
+        licenceName: 'Test Licence'
+      },
+      licenceRef: generateLicenceRef(),
+      revokedDate: null,
+      startDate: new Date('2022-04-01')
     })
   })
 
@@ -37,8 +37,8 @@ describe('Licences - Licence Presenter', () => {
       const result = LicencePresenter(licence)
 
       expect(result).toEqual({
-        endDate: '',
         effectiveFrom: formatLongDate(licence.issueDate),
+        endDate: '',
         licenceName: licence.licenceDocumentHeader.licenceName,
         pageTitle: `Licence ${licence.licenceRef}`
       })

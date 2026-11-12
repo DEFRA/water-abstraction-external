@@ -1,3 +1,9 @@
+/**
+ * Controller for /licences endpoints
+ *
+ * @module LicencesController
+ */
+
 import ViewLicenceService from '../services/licences/view-licence.service.js'
 
 export async function viewLicence(request, h) {
