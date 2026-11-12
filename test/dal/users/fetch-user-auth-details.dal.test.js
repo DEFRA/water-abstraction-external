@@ -56,18 +56,18 @@ describe('Users - Fetch User Auth Details DAL', () => {
 
       expect(result).toEqual({
         id: user.id,
-        licenceEntityId: user.licenceEntityId,
-        username: user.username,
         licenceEntity: {
           id: userEntity.id,
           licenceEntityRoles: [
             {
-              id: licenceEntityRole.id,
               companyEntityId: licenceEntityRole.companyEntityId,
+              id: licenceEntityRole.id,
               role: licenceEntityRole.role
             }
           ]
-        }
+        },
+        licenceEntityId: user.licenceEntityId,
+        username: user.username
       })
     })
   })

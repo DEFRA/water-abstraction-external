@@ -2,9 +2,9 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Test helpers
+import http2 from 'node:http2'
 import LoggerStub from 'water-abstraction-engine/test/stubs/logger.stub.js'
 import { generateUUID } from 'water-abstraction-engine/test/generators.js'
-import http2 from 'node:http2'
 
 // Things we need to stub
 import * as ViewInfoService from '../../src/services/health/view-info.service.js'
@@ -44,15 +44,15 @@ describe('Health controller', () => {
     describe('GET', () => {
       beforeEach(() => {
         info = {
-          pageTitle: 'Info',
-          pageTitleCaption: 'Service information',
           appData: {
             commit: generateUUID(),
             name: 'External',
             serviceName: 'external',
             version: '1.0.0'
           },
-          notifyData: 'Up and running'
+          notifyData: 'Up and running',
+          pageTitle: 'Info',
+          pageTitleCaption: 'Service information'
         }
 
         options = {

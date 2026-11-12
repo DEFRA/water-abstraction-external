@@ -3,8 +3,8 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 
 // Test helpers
 import Boom from 'water-abstraction-engine/wrappers/boom.wrapper.js'
-import LoggerStub from 'water-abstraction-engine/test/stubs/logger.stub.js'
 import http2 from 'node:http2'
+import LoggerStub from 'water-abstraction-engine/test/stubs/logger.stub.js'
 import { yesterday } from 'water-abstraction-engine/test/general.js'
 import { generateLicenceRef, generateUUID } from 'water-abstraction-engine/test/generators.js'
 
@@ -46,29 +46,29 @@ describe('Licences controller', () => {
     describe('GET', () => {
       beforeEach(() => {
         licence = {
+          issueDate: yesterday(),
           pageTitle: `Licence summary ${generateLicenceRef()}`,
           pageTitleCaption: 'Unregistered licence',
-          startDate: yesterday(),
-          issueDate: yesterday(),
-          waterUndertaker: false,
           regions: {
             historicalAreaCode: 'KAEA',
+            localEnvironmentAgencyPlanCode: 'LEME',
             regionalChargeArea: 'Southern',
-            standardUnitChargeCode: 'SUCSO',
-            localEnvironmentAgencyPlanCode: 'LEME'
-          }
+            standardUnitChargeCode: 'SUCSO'
+          },
+          startDate: yesterday(),
+          waterUndertaker: false
         }
 
         options = {
-          method: 'GET',
-          url: `/licences/${generateUUID()}`,
           auth: {
-            strategy: 'session',
             credentials: {
               permission: { manageAccess: false, manageReturns: false },
               scope: ['user']
-            }
-          }
+            },
+            strategy: 'session'
+          },
+          method: 'GET',
+          url: `/licences/${generateUUID()}`
         }
       })
 

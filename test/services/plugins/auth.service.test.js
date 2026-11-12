@@ -19,8 +19,8 @@ describe('Plugins - Auth Service', () => {
 
   beforeEach(() => {
     session = {
-      userId: generateUserId(),
-      company: { id: generateUUID(), name: 'ACME Water Ltd' }
+      company: { id: generateUUID(), name: 'ACME Water Ltd' },
+      userId: generateUserId()
     }
   })
 
@@ -32,12 +32,12 @@ describe('Plugins - Auth Service', () => {
     beforeEach(() => {
       user = {
         id: generateUUID(),
-        licenceEntityId: generateUUID(),
-        username: 'external@example.com',
         licenceEntity: {
           id: generateUUID(),
           licenceEntityRoles: []
-        }
+        },
+        licenceEntityId: generateUUID(),
+        username: 'external@example.com'
       }
     })
 
@@ -50,12 +50,12 @@ describe('Plugins - Auth Service', () => {
         const result = await AuthService(request, session)
 
         expect(result).toEqual({
-          isValid: true,
           credentials: {
             permission: { manageAccess: false, manageReturns: false },
             scope: [],
             user
-          }
+          },
+          isValid: true
         })
       })
     })
@@ -64,8 +64,8 @@ describe('Plugins - Auth Service', () => {
       describe('as a "Basic access" user', () => {
         beforeEach(() => {
           user.licenceEntity.licenceEntityRoles.push({
-            id: generateUUID(),
             companyEntityId: session.company.id,
+            id: generateUUID(),
             role: 'user'
           })
 
@@ -76,12 +76,12 @@ describe('Plugins - Auth Service', () => {
           const result = await AuthService(request, session)
 
           expect(result).toEqual({
-            isValid: true,
             credentials: {
               permission: { manageAccess: false, manageReturns: false },
               scope: ['user'],
               user
-            }
+            },
+            isValid: true
           })
         })
       })
@@ -89,8 +89,8 @@ describe('Plugins - Auth Service', () => {
       describe('as a "Returns" user', () => {
         beforeEach(() => {
           user.licenceEntity.licenceEntityRoles.push({
-            id: generateUUID(),
             companyEntityId: session.company.id,
+            id: generateUUID(),
             role: 'user_returns'
           })
 
@@ -101,12 +101,12 @@ describe('Plugins - Auth Service', () => {
           const result = await AuthService(request, session)
 
           expect(result).toEqual({
-            isValid: true,
             credentials: {
               permission: { manageAccess: false, manageReturns: true },
               scope: ['user_returns'],
               user
-            }
+            },
+            isValid: true
           })
         })
       })
@@ -116,14 +116,14 @@ describe('Plugins - Auth Service', () => {
           // NOTE: When a user is a primary user, they typically also have a "user_returns" role, so we add both here to
           // test that the service correctly handles multiple roles.
           user.licenceEntity.licenceEntityRoles.push({
-            id: generateUUID(),
             companyEntityId: session.company.id,
+            id: generateUUID(),
             role: 'user_returns'
           })
 
           user.licenceEntity.licenceEntityRoles.push({
-            id: generateUUID(),
             companyEntityId: session.company.id,
+            id: generateUUID(),
             role: 'primary_user'
           })
 
@@ -134,12 +134,12 @@ describe('Plugins - Auth Service', () => {
           const result = await AuthService(request, session)
 
           expect(result).toEqual({
-            isValid: true,
             credentials: {
               permission: { manageAccess: true, manageReturns: true },
               scope: ['user_returns', 'primary_user'],
               user
-            }
+            },
+            isValid: true
           })
         })
       })
