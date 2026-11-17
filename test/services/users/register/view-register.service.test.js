@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest'
 
 // Thing under test
-import ViewRegisterService from '../../../src/services/users/view-register.service.js'
+import ViewRegisterService from '../../../../src/services/users/register/view-register.service.js'
 
 describe('User - View Register Service', () => {
   describe('when called', () => {

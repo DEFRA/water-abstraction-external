@@ -3,7 +3,7 @@
  * @module ViewRegisterService
  */
 
-import RegisterPresenter from '../../presenters/users/register.presenter.js'
+import RegisterPresenter from '../../../presenters/users/register.presenter.js'
 
 /**
  * Orchestrates presenting the data needed for the `/users/register` page

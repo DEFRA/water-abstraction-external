@@ -4,14 +4,16 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 // Test helpers
 import http2 from 'node:http2'
 import LoggerStub from 'water-abstraction-engine/test/stubs/logger.stub.js'
+import { generateUUID } from 'water-abstraction-engine/test/generators.js'
 
 // Things we need to stub
-import * as ViewRegisterService from '../../../src/services/users/view-register.service.js'
+import * as InitiateSessionService from '../../../src/services/users/register/initiate-session.service.js'
+import * as ViewRegisterService from '../../../src/services/users/register/view-register.service.js'
 
 // For running our service
 import { init } from '../../../src/server.js'
 
-const { HTTP_STATUS_OK } = http2.constants
+const { HTTP_STATUS_FOUND, HTTP_STATUS_OK } = http2.constants
 
 describe('User register controller', () => {
   let options
@@ -54,6 +56,30 @@ describe('User register controller', () => {
 
         expect(response.statusCode).toEqual(HTTP_STATUS_OK)
         expect(response.payload).toContain('Create an account to manage your water abstraction licence online')
+      })
+    })
+  })
+
+  describe('/users/register/setup', () => {
+    describe('GET', () => {
+      let sessionId
+
+      beforeEach(() => {
+        sessionId = generateUUID()
+
+        options = {
+          method: 'GET',
+          url: '/users/register/setup'
+        }
+
+        vi.spyOn(InitiateSessionService, 'default').mockResolvedValue({ id: sessionId })
+      })
+
+      it('redirects to the email page', async () => {
+        const response = await server.inject(options)
+
+        expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
+        expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/email`)
       })
     })
   })

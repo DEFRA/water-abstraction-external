@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest'
 import SessionModel from 'water-abstraction-engine/models/session.model.js'
 
 // Thing under test
-import InitiateSessionService from '../../../../src/services/users/setup/initiate-session.service.js'
+import InitiateSessionService from '../../../../src/services/users/register/initiate-session.service.js'
 
-describe('Users - Setup - Initiate Session service', () => {
+describe('Users - Register - Initiate Session service', () => {
   describe('when called', () => {
     it('creates a new, empty session record', async () => {
       const result = await InitiateSessionService()

@@ -9,9 +9,8 @@ import FilterRoutesService from 'water-abstraction-engine/services/plugins/filte
 import HealthRoutes from '../routes/health.routes.js'
 import LicenceRoutes from '../routes/licences.routes.js'
 import UserRegisterRoutes from '../routes/users/register.routes.js'
-import UsersSetupRoutes from '../routes/users/setup.routes.js'
 
-const routes = [...HealthRoutes, ...LicenceRoutes, ...UserRegisterRoutes, ...UsersSetupRoutes]
+const routes = [...HealthRoutes, ...LicenceRoutes, ...UserRegisterRoutes]
 
 export default {
   name: 'router-external',
