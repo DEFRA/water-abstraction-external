@@ -4,7 +4,7 @@
  * @module UserRegisterRoutes
  */
 
-import { viewRegister } from '../../controllers/users/register.controller.js'
+import { setup, viewRegister } from '../../controllers/users/register.controller.js'
 
 export default [
   {
@@ -14,5 +14,13 @@ export default [
       handler: viewRegister
     },
     path: '/users/register'
+  },
+  {
+    method: 'GET',
+    options: {
+      auth: false,
+      handler: setup
+    },
+    path: '/users/register/setup'
   }
 ]
