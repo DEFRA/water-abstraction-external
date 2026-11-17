@@ -13,6 +13,6 @@ export default [
       auth: false,
       handler: viewRegister
     },
-    path: '/user/register'
+    path: '/users/register'
   }
 ]
