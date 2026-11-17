@@ -6,7 +6,7 @@ import http2 from 'node:http2'
 import LoggerStub from 'water-abstraction-engine/test/stubs/logger.stub.js'
 
 // Things we need to stub
-import * as ViewRegisterService from '../../../src/services/user/view-register.service.js'
+import * as ViewRegisterService from '../../../src/services/users/view-register.service.js'
 
 // For running our service
 import { init } from '../../../src/server.js'
@@ -35,12 +35,12 @@ describe('User register controller', () => {
     await server.stop()
   })
 
-  describe('/user/register', () => {
+  describe('/users/register', () => {
     describe('GET', () => {
       beforeEach(() => {
         options = {
           method: 'GET',
-          url: '/user/register'
+          url: '/users/register'
         }
 
         vi.spyOn(ViewRegisterService, 'default').mockReturnValue({

@@ -1,10 +1,10 @@
 /**
- * Formats data for the `/user/register` page
+ * Formats data for the `/users/register` page
  * @module RegisterPresenter
  */
 
 /**
- * Formats data for the `/user/register` page
+ * Formats data for the `/users/register` page
  *
  * @returns {object} The data formatted for the view template
  */

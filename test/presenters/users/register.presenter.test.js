@@ -2,12 +2,12 @@
 import { describe, expect, it } from 'vitest'
 
 // Thing under test
-import ViewRegisterService from '../../../src/services/user/view-register.service.js'
+import RegisterPresenter from '../../../src/presenters/users/register.presenter.js'
 
-describe('User - View Register Service', () => {
+describe('User - Register Presenter', () => {
   describe('when called', () => {
     it('returns page data for the view', () => {
-      const result = ViewRegisterService()
+      const result = RegisterPresenter()
 
       expect(result).toEqual({
         backLink: {

@@ -1,10 +1,10 @@
 /**
- * Routes for the /user/register endpoints
+ * Routes for the /users/register endpoints
  *
  * @module UserRegisterRoutes
  */
 
-import { viewRegister } from '../../controllers/user/register.controller.js'
+import { viewRegister } from '../../controllers/users/register.controller.js'
 
 export default [
   {
