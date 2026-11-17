@@ -40,7 +40,12 @@ export default {
           // Maximum time in milliseconds allowed for a before/after hook to complete
           hookTimeout: 10000,
           // Glob patterns that select which test files belong to this project
-          include: ['test/controllers/**/*.test.js', 'test/presenters/**/*.test.js', 'test/services/**/*.test.js'],
+          include: [
+            'test/controllers/**/*.test.js',
+            'test/presenters/**/*.test.js',
+            'test/services/**/*.test.js',
+            'test/validators/**/*.test.js'
+          ],
           // Share a single worker context across test files rather than isolating each file in its own module scope
           isolate: false,
           // In CI use 2 workers (GitHub actions have 2 cores) to avoid resource contention; locally use 50%
