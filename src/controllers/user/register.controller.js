@@ -1,7 +1,7 @@
 /**
  * Controller for /user/register endpoints
  *
- * @module UserRegisterController
+ * @module RegisterController
  */
 
 import ViewRegisterService from '../../services/user/view-register.service.js'
