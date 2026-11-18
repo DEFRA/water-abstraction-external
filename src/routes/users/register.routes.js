@@ -6,8 +6,10 @@
 
 import {
   setup,
+  submitCancel,
   submitCheck,
   submitEmail,
+  viewCancel,
   viewCheck,
   viewEmail,
   viewRegister
@@ -61,5 +63,21 @@ export default [
       handler: submitCheck
     },
     path: '/users/register/{sessionId}/check'
+  },
+  {
+    method: 'GET',
+    options: {
+      auth: false,
+      handler: viewCancel
+    },
+    path: '/users/register/{sessionId}/cancel'
+  },
+  {
+    method: 'POST',
+    options: {
+      auth: false,
+      handler: submitCancel
+    },
+    path: '/users/register/{sessionId}/cancel'
   }
 ]
