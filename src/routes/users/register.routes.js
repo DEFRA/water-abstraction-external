@@ -4,7 +4,14 @@
  * @module UserRegisterRoutes
  */
 
-import { setup, submitEmail, viewEmail, viewRegister } from '../../controllers/users/register.controller.js'
+import {
+  setup,
+  submitCheck,
+  submitEmail,
+  viewCheck,
+  viewEmail,
+  viewRegister
+} from '../../controllers/users/register.controller.js'
 
 export default [
   {
@@ -38,5 +45,21 @@ export default [
       handler: submitEmail
     },
     path: '/users/register/{sessionId}/email'
+  },
+  {
+    method: 'GET',
+    options: {
+      auth: false,
+      handler: viewCheck
+    },
+    path: '/users/register/{sessionId}/check'
+  },
+  {
+    method: 'POST',
+    options: {
+      auth: false,
+      handler: submitCheck
+    },
+    path: '/users/register/{sessionId}/check'
   }
 ]
