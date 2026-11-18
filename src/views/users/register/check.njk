@@ -1,0 +1,32 @@
+{% extends 'layout.njk' %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% block pageContent %}
+  {{ govukInsetText({ text: "We will send an email with a link to this address so you can verify your email address." }) }}
+
+  {{ govukSummaryList({
+    rows: [
+      {
+        key: { text: "Email address" },
+        value: { text: email },
+        actions: {
+          items: [
+            { href: links.email, text: "Change", visuallyHiddenText: "email address" }
+          ]
+        }
+      }
+    ]
+  }) }}
+
+  <form novalidate method="post">
+    <input type="hidden" name="wrlsCrumb" value="{{ wrlsCrumb }}"/>
+
+    <div class="govuk-button-group">
+      {{ govukButton({ text: "Confirm", preventDoubleClick: true }) }}
+      {{ govukButton({ text: "Cancel", classes: "govuk-button--secondary", href: links.cancel, preventDoubleClick: true }) }}
+    </div>
+  </form>
+{% endblock %}
