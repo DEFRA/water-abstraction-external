@@ -4,10 +4,13 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 // Test helpers
 import http2 from 'node:http2'
 import LoggerStub from 'water-abstraction-engine/test/stubs/logger.stub.js'
+import { postRequestOptions } from 'water-abstraction-engine/test/general.js'
 import { generateUUID } from 'water-abstraction-engine/test/generators.js'
 
 // Things we need to stub
 import * as InitiateSessionService from '../../../src/services/users/register/initiate-session.service.js'
+import * as SubmitEmailService from '../../../src/services/users/register/submit-email.service.js'
+import * as ViewEmailService from '../../../src/services/users/register/view-email.service.js'
 import * as ViewRegisterService from '../../../src/services/users/register/view-register.service.js'
 
 // For running our service
@@ -80,6 +83,74 @@ describe('User register controller', () => {
 
         expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
         expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/email`)
+      })
+    })
+  })
+
+  describe('/users/register/{sessionId}/email', () => {
+    let sessionId
+
+    beforeEach(() => {
+      sessionId = generateUUID()
+    })
+
+    describe('GET', () => {
+      beforeEach(() => {
+        options = {
+          method: 'GET',
+          url: `/users/register/${sessionId}/email`
+        }
+
+        vi.spyOn(ViewEmailService, 'default').mockResolvedValue({
+          pageTitle: 'Enter your email address'
+        })
+      })
+
+      it('returns the page successfully', async () => {
+        const response = await server.inject(options)
+
+        expect(response.statusCode).toEqual(HTTP_STATUS_OK)
+        expect(response.payload).toContain('Enter your email address')
+      })
+    })
+
+    describe('POST', () => {
+      beforeEach(() => {
+        options = postRequestOptions(`/users/register/${sessionId}/email`, {}, null)
+      })
+
+      describe('when a request is valid', () => {
+        beforeEach(() => {
+          vi.spyOn(SubmitEmailService, 'default').mockResolvedValue({
+            redirectUrl: `/ext/users/register/${sessionId}/check`
+          })
+        })
+
+        it('redirects to the check page', async () => {
+          const response = await server.inject(options)
+
+          expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
+          expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/check`)
+        })
+      })
+
+      describe('when a request is invalid', () => {
+        beforeEach(() => {
+          vi.spyOn(SubmitEmailService, 'default').mockResolvedValue({
+            error: {
+              errorList: [{ href: '#email', text: 'Enter your email address' }]
+            },
+            pageTitle: 'Enter your email address'
+          })
+        })
+
+        it('re-renders the page with an error message', async () => {
+          const response = await server.inject(options)
+
+          expect(response.statusCode).toEqual(HTTP_STATUS_OK)
+          expect(response.payload).toContain('There is a problem')
+          expect(response.payload).toContain('Enter your email address')
+        })
       })
     })
   })

@@ -5,12 +5,40 @@
  */
 
 import InitiateSessionService from '../../services/users/register/initiate-session.service.js'
+import SubmitEmailService from '../../services/users/register/submit-email.service.js'
+import ViewEmailService from '../../services/users/register/view-email.service.js'
 import ViewRegisterService from '../../services/users/register/view-register.service.js'
 
 export async function setup(_request, h) {
   const session = await InitiateSessionService()
 
   return h.redirect(`/ext/users/register/${session.id}/email`)
+}
+
+export async function submitEmail(request, h) {
+  const {
+    payload,
+    params: { sessionId },
+    yar
+  } = request
+
+  const pageData = await SubmitEmailService(sessionId, payload, yar)
+
+  if (pageData.error) {
+    return h.view('users/register/email.njk', pageData)
+  }
+
+  return h.redirect(pageData.redirectUrl)
+}
+
+export async function viewEmail(request, h) {
+  const {
+    params: { sessionId }
+  } = request
+
+  const pageData = await ViewEmailService(sessionId)
+
+  return h.view('users/register/email.njk', pageData)
 }
 
 export async function viewRegister(_request, h) {
