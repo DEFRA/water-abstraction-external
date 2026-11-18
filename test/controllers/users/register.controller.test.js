@@ -13,6 +13,7 @@ import * as SubmitCancelService from '../../../src/services/users/register/submi
 import * as SubmitCheckService from '../../../src/services/users/register/submit-check.service.js'
 import * as SubmitEmailService from '../../../src/services/users/register/submit-email.service.js'
 import * as ViewCancelService from '../../../src/services/users/register/view-cancel.service.js'
+import * as ViewCheckEmailService from '../../../src/services/users/register/view-check-email.service.js'
 import * as ViewCheckService from '../../../src/services/users/register/view-check.service.js'
 import * as ViewEmailService from '../../../src/services/users/register/view-email.service.js'
 import * as ViewRegisterService from '../../../src/services/users/register/view-register.service.js'
@@ -186,6 +187,37 @@ describe('User register controller', () => {
 
         expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
         expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/check-email`)
+      })
+    })
+  })
+
+  describe('/users/register/{sessionId}/check-email', () => {
+    let sessionId
+
+    beforeEach(() => {
+      sessionId = generateUUID()
+    })
+
+    describe('GET', () => {
+      beforeEach(() => {
+        options = {
+          method: 'GET',
+          url: `/users/register/${sessionId}/check-email`
+        }
+
+        vi.spyOn(ViewCheckEmailService, 'default').mockResolvedValue({
+          email: 'licences@bigfarm.co.uk',
+          pageTitle: 'Check your email',
+          pageTitleCaption: 'Create an account'
+        })
+      })
+
+      it('returns the page successfully', async () => {
+        const response = await server.inject(options)
+
+        expect(response.statusCode).toEqual(HTTP_STATUS_OK)
+        expect(response.payload).toContain('Check your email')
+        expect(response.payload).toContain('licences@bigfarm.co.uk')
       })
     })
   })
