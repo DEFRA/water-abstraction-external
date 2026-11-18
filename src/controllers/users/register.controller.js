@@ -5,8 +5,10 @@
  */
 
 import InitiateSessionService from '../../services/users/register/initiate-session.service.js'
+import SubmitCancelService from '../../services/users/register/submit-cancel.service.js'
 import SubmitCheckService from '../../services/users/register/submit-check.service.js'
 import SubmitEmailService from '../../services/users/register/submit-email.service.js'
+import ViewCancelService from '../../services/users/register/view-cancel.service.js'
 import ViewCheckService from '../../services/users/register/view-check.service.js'
 import ViewEmailService from '../../services/users/register/view-email.service.js'
 import ViewRegisterService from '../../services/users/register/view-register.service.js'
@@ -15,6 +17,16 @@ export async function setup(_request, h) {
   const session = await InitiateSessionService()
 
   return h.redirect(`/ext/users/register/${session.id}/email`)
+}
+
+export async function submitCancel(request, h) {
+  const {
+    params: { sessionId }
+  } = request
+
+  const { redirectUrl } = await SubmitCancelService(sessionId)
+
+  return h.redirect(redirectUrl)
 }
 
 export function submitCheck(request, h) {
@@ -41,6 +53,16 @@ export async function submitEmail(request, h) {
   }
 
   return h.redirect(pageData.redirectUrl)
+}
+
+export async function viewCancel(request, h) {
+  const {
+    params: { sessionId }
+  } = request
+
+  const pageData = await ViewCancelService(sessionId)
+
+  return h.view('users/register/cancel.njk', pageData)
 }
 
 export async function viewCheck(request, h) {
