@@ -11,6 +11,7 @@ import {
   submitEmail,
   viewCancel,
   viewCheck,
+  viewCheckEmail,
   viewEmail,
   viewRegister
 } from '../../controllers/users/register.controller.js'
@@ -63,6 +64,14 @@ export default [
       handler: submitCheck
     },
     path: '/users/register/{sessionId}/check'
+  },
+  {
+    method: 'GET',
+    options: {
+      auth: false,
+      handler: viewCheckEmail
+    },
+    path: '/users/register/{sessionId}/check-email'
   },
   {
     method: 'GET',

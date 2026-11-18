@@ -9,6 +9,7 @@ import SubmitCancelService from '../../services/users/register/submit-cancel.ser
 import SubmitCheckService from '../../services/users/register/submit-check.service.js'
 import SubmitEmailService from '../../services/users/register/submit-email.service.js'
 import ViewCancelService from '../../services/users/register/view-cancel.service.js'
+import ViewCheckEmailService from '../../services/users/register/view-check-email.service.js'
 import ViewCheckService from '../../services/users/register/view-check.service.js'
 import ViewEmailService from '../../services/users/register/view-email.service.js'
 import ViewRegisterService from '../../services/users/register/view-register.service.js'
@@ -63,6 +64,16 @@ export async function viewCancel(request, h) {
   const pageData = await ViewCancelService(sessionId)
 
   return h.view('users/register/cancel.njk', pageData)
+}
+
+export async function viewCheckEmail(request, h) {
+  const {
+    params: { sessionId }
+  } = request
+
+  const pageData = await ViewCheckEmailService(sessionId)
+
+  return h.view('users/register/check-email.njk', pageData)
 }
 
 export async function viewCheck(request, h) {
