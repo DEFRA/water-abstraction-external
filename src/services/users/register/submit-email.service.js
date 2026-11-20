@@ -6,16 +6,23 @@
 import FetchSessionDal from 'water-abstraction-engine/dal/fetch-session.dal.js'
 import { formatEmail, formatValidationResult } from 'water-abstraction-engine/presenters/base.presenter.js'
 
+import CreateUserDal from '../../../dal/users/create-user.dal.js'
 import EmailPresenter from '../../../presenters/users/register/email.presenter.js'
 import EmailValidator from '../../../validators/users/register/email.validator.js'
+import FetchUserByEmailDal from '../../../dal/users/fetch-user-by-email.dal.js'
+import SendResetPasswordEmailService from './send-reset-password-email.service.js'
+import SendVerificationEmailService from './send-verification-email.service.js'
+import UpdateResetGuidDal from '../../../dal/users/update-reset-guid.dal.js'
 
 /**
  * Orchestrates validating the data for the '/users/register/{sessionId}/email' page
  *
- * If valid, the email address is saved to the session and the user is redirected to the check email page. Otherwise,
- * the page data is returned with the validation errors.
+ * If valid, the email address is saved to the session. If an account already exists for the email address, the user is
+ * sent an email with links to sign in or reset their password. Otherwise, the user is created and sent an email with the
+ * link to set up their account. Either way the user is redirected to the check email page, so we do not reveal whether
+ * an account exists.
  *
- * Creating the user and sending the email with the link to set up their account will be added later.
+ * If invalid, the page data is returned with the validation errors.
  *
  * @param {string} sessionId - The UUID of the current session
  * @param {object} payload - The submitted form data
@@ -29,6 +36,8 @@ export default async function submitEmailService(sessionId, payload) {
 
   if (!validationResult) {
     await _save(session, payload)
+
+    await _createAccount(session.email)
 
     return {
       redirectUrl: `/ext/users/register/${sessionId}/check-email`
@@ -44,6 +53,22 @@ export default async function submitEmailService(sessionId, payload) {
     error: validationResult,
     ...pageData
   }
+}
+
+async function _createAccount(email) {
+  const existingUser = await FetchUserByEmailDal(email)
+
+  if (existingUser) {
+    const resetGuid = await UpdateResetGuidDal(existingUser.id)
+
+    SendResetPasswordEmailService(email, resetGuid)
+
+    return
+  }
+
+  const user = await CreateUserDal(email)
+
+  SendVerificationEmailService(email, user.resetGuid)
 }
 
 async function _save(session, payload) {
