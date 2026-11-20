@@ -62,13 +62,11 @@ async function _createAccount(email) {
     const resetGuid = await UpdateResetGuidDal(existingUser.id)
 
     SendResetPasswordEmailService(email, resetGuid)
+  } else {
+    const user = await CreateUserDal(email)
 
-    return
+    SendVerificationEmailService(email, user.resetGuid)
   }
-
-  const user = await CreateUserDal(email)
-
-  SendVerificationEmailService(email, user.resetGuid)
 }
 
 async function _save(session, payload) {
