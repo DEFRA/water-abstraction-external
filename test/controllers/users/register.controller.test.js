@@ -9,12 +9,8 @@ import { generateUUID } from 'water-abstraction-engine/test/generators.js'
 
 // Things we need to stub
 import * as InitiateSessionService from '../../../src/services/users/register/initiate-session.service.js'
-import * as SubmitCancelService from '../../../src/services/users/register/submit-cancel.service.js'
-import * as SubmitCheckService from '../../../src/services/users/register/submit-check.service.js'
 import * as SubmitEmailService from '../../../src/services/users/register/submit-email.service.js'
-import * as ViewCancelService from '../../../src/services/users/register/view-cancel.service.js'
 import * as ViewCheckEmailService from '../../../src/services/users/register/view-check-email.service.js'
-import * as ViewCheckService from '../../../src/services/users/register/view-check.service.js'
 import * as ViewEmailService from '../../../src/services/users/register/view-email.service.js'
 import * as ViewRegisterService from '../../../src/services/users/register/view-register.service.js'
 
@@ -92,105 +88,6 @@ describe('User register controller', () => {
     })
   })
 
-  describe('/users/register/{sessionId}/cancel', () => {
-    let sessionId
-
-    beforeEach(() => {
-      sessionId = generateUUID()
-    })
-
-    describe('GET', () => {
-      beforeEach(() => {
-        options = {
-          method: 'GET',
-          url: `/users/register/${sessionId}/cancel`
-        }
-
-        vi.spyOn(ViewCancelService, 'default').mockResolvedValue({
-          backLink: { href: `/ext/users/register/${sessionId}/check`, text: 'Back' },
-          email: 'licences@bigfarm.co.uk',
-          pageTitle: 'You are about to cancel creating an account',
-          pageTitleCaption: 'Create an account'
-        })
-      })
-
-      it('returns the page successfully', async () => {
-        const response = await server.inject(options)
-
-        expect(response.statusCode).toEqual(HTTP_STATUS_OK)
-        expect(response.payload).toContain('You are about to cancel creating an account')
-        expect(response.payload).toContain('licences@bigfarm.co.uk')
-      })
-    })
-
-    describe('POST', () => {
-      beforeEach(() => {
-        options = postRequestOptions(`/users/register/${sessionId}/cancel`, {}, null)
-
-        vi.spyOn(SubmitCancelService, 'default').mockResolvedValue({ redirectUrl: '/welcome' })
-      })
-
-      it('redirects to the welcome page', async () => {
-        const response = await server.inject(options)
-
-        expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
-        expect(response.headers.location).toEqual('/welcome')
-      })
-    })
-  })
-
-  describe('/users/register/{sessionId}/check', () => {
-    let sessionId
-
-    beforeEach(() => {
-      sessionId = generateUUID()
-    })
-
-    describe('GET', () => {
-      beforeEach(() => {
-        options = {
-          method: 'GET',
-          url: `/users/register/${sessionId}/check`
-        }
-
-        vi.spyOn(ViewCheckService, 'default').mockResolvedValue({
-          email: 'licences@bigfarm.co.uk',
-          links: {
-            cancel: `/ext/users/register/${sessionId}/cancel`,
-            email: `/ext/users/register/${sessionId}/email`
-          },
-          pageTitle: 'Check your details',
-          pageTitleCaption: 'Create an account'
-        })
-      })
-
-      it('returns the page successfully', async () => {
-        const response = await server.inject(options)
-
-        expect(response.statusCode).toEqual(HTTP_STATUS_OK)
-        expect(response.payload).toContain('Check your details')
-        expect(response.payload).toContain('licences@bigfarm.co.uk')
-      })
-    })
-
-    describe('POST', () => {
-      beforeEach(() => {
-        options = postRequestOptions(`/users/register/${sessionId}/check`, {}, null)
-
-        vi.spyOn(SubmitCheckService, 'default').mockReturnValue({
-          redirectUrl: `/ext/users/register/${sessionId}/check-email`
-        })
-      })
-
-      it('redirects to the check email page', async () => {
-        const response = await server.inject(options)
-
-        expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
-        expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/check-email`)
-      })
-    })
-  })
-
   describe('/users/register/{sessionId}/check-email', () => {
     let sessionId
 
@@ -257,15 +154,15 @@ describe('User register controller', () => {
       describe('when a request is valid', () => {
         beforeEach(() => {
           vi.spyOn(SubmitEmailService, 'default').mockResolvedValue({
-            redirectUrl: `/ext/users/register/${sessionId}/check`
+            redirectUrl: `/ext/users/register/${sessionId}/check-email`
           })
         })
 
-        it('redirects to the check page', async () => {
+        it('redirects to the check email page', async () => {
           const response = await server.inject(options)
 
           expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
-          expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/check`)
+          expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/check-email`)
         })
       })
 

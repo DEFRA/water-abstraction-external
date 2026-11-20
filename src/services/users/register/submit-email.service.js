@@ -5,7 +5,6 @@
 
 import FetchSessionDal from 'water-abstraction-engine/dal/fetch-session.dal.js'
 import { formatEmail, formatValidationResult } from 'water-abstraction-engine/presenters/base.presenter.js'
-import { flashNotification } from 'water-abstraction-engine/lib/general.lib.js'
 
 import EmailPresenter from '../../../presenters/users/register/email.presenter.js'
 import EmailValidator from '../../../validators/users/register/email.validator.js'
@@ -13,30 +12,30 @@ import EmailValidator from '../../../validators/users/register/email.validator.j
 /**
  * Orchestrates validating the data for the '/users/register/{sessionId}/email' page
  *
- * If valid, the email address is saved to the session and the user is redirected to the check page. Otherwise, the
- * page data is returned with the validation errors.
+ * If valid, the email address is saved to the session and the user is redirected to the check email page. Otherwise,
+ * the page data is returned with the validation errors.
+ *
+ * Creating the user and sending the email with the link to set up their account will be added later.
  *
  * @param {string} sessionId - The UUID of the current session
  * @param {object} payload - The submitted form data
- * @param {object} yar - The Hapi `request.yar` session manager passed on by the controller
  *
  * @returns {Promise<object>} The redirect URL, or the data formatted for the view template with errors
  */
-export default async function submitEmailService(sessionId, payload, yar) {
+export default async function submitEmailService(sessionId, payload) {
   const session = await FetchSessionDal(sessionId)
 
   const validationResult = _validate(payload)
 
   if (!validationResult) {
-    _notification(session, payload, yar)
-
     await _save(session, payload)
 
     return {
-      redirectUrl: `/ext/users/register/${sessionId}/check`
+      redirectUrl: `/ext/users/register/${sessionId}/check-email`
     }
   }
 
+  session.confirmEmail = payload.confirmEmail
   session.email = payload.email
 
   const pageData = EmailPresenter(session)
@@ -47,13 +46,8 @@ export default async function submitEmailService(sessionId, payload, yar) {
   }
 }
 
-function _notification(session, payload, yar) {
-  if (session.checkPageVisited && session.email !== formatEmail(payload.email)) {
-    flashNotification(yar, 'Updated', 'Email address updated')
-  }
-}
-
 async function _save(session, payload) {
+  session.confirmEmail = formatEmail(payload.confirmEmail)
   session.email = formatEmail(payload.email)
 
   return session.$update()
