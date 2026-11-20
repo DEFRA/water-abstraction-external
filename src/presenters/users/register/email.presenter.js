@@ -13,23 +13,16 @@ import { formatEmail } from 'water-abstraction-engine/presenters/base.presenter.
  * @returns {object} The data formatted for the view template
  */
 export default function emailPresenter(session) {
-  const { checkPageVisited, email, id: sessionId } = session
+  const { confirmEmail, email } = session
 
   return {
     backLink: {
-      href: _href(checkPageVisited, sessionId),
+      href: '/ext/users/register',
       text: 'Back'
     },
+    confirmEmail: formatEmail(confirmEmail),
     email: formatEmail(email),
     pageTitle: 'Enter your email address',
     pageTitleCaption: 'Create an account'
   }
-}
-
-function _href(checkPageVisited, sessionId) {
-  if (checkPageVisited) {
-    return `/ext/users/register/${sessionId}/check`
-  }
-
-  return '/ext/users/register'
 }

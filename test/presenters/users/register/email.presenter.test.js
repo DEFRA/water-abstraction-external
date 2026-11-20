@@ -23,6 +23,7 @@ describe('Users - Register - Email presenter', () => {
           href: '/ext/users/register',
           text: 'Back'
         },
+        confirmEmail: null,
         email: null,
         pageTitle: 'Enter your email address',
         pageTitleCaption: 'Create an account'
@@ -30,24 +31,16 @@ describe('Users - Register - Email presenter', () => {
     })
   })
 
-  describe('the "backLink" property', () => {
-    describe('when the check page has been visited', () => {
+  describe('the "confirmEmail" property', () => {
+    describe('when a confirm email address has been saved', () => {
       beforeEach(() => {
-        session.checkPageVisited = true
+        session.confirmEmail = 'Licences@BigFarm.co.uk'
       })
 
-      it('returns a link to the check page', () => {
+      it('returns the confirm email address in lowercase', () => {
         const result = EmailPresenter(session)
 
-        expect(result.backLink.href).toEqual(`/ext/users/register/${session.id}/check`)
-      })
-    })
-
-    describe('when the check page has not been visited', () => {
-      it('returns a link to the register start page', () => {
-        const result = EmailPresenter(session)
-
-        expect(result.backLink.href).toEqual('/ext/users/register')
+        expect(result.confirmEmail).toEqual('licences@bigfarm.co.uk')
       })
     })
   })
