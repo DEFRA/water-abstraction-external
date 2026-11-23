@@ -16,14 +16,13 @@ import { generateUUID } from 'water-abstraction-engine/lib/general.lib.js'
 export default async function createUserDal(email) {
   return UserModel.query().insert({
     application: 'water_vml',
-    // Placeholder random password until the user sets their own via the link in the verification email
     password: UserModel.generateHashedPassword(generateUUID()),
     resetGuid: generateUUID(),
     resetRequired: 1,
     userData: {},
-    username: email
-    // role: {
-    //   scopes: ['external']
-    // }
+    username: email,
+    role: {
+      scopes: ['external']
+    }
   })
 }

@@ -65,14 +65,12 @@ async function _createAccount(email) {
 
     const notification = await CreateResetPasswordNotificationDal(email, resetGuid)
 
-    // Intentionally not awaited — fire-and-forget with internal error handling
     SendResetPasswordEmailService(notification)
   } else {
     const user = await CreateUserDal(email)
 
     const notification = await CreateVerificationNotificationDal(email, user.resetGuid)
 
-    // Intentionally not awaited — fire-and-forget with internal error handling
     SendVerificationEmailService(notification)
   }
 }
