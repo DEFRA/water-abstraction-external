@@ -3,23 +3,31 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Test helpers
 import GlobalNotifierStub from 'water-abstraction-engine/test/stubs/global-notifier.stub.js'
-import ServerConfig from 'water-abstraction-engine/config/server.config.js'
 
 // Things we need to stub
 import * as CreateEmailRequest from 'water-abstraction-engine/requests/notify/create-email.request.js'
+
+import * as UpdateNotificationDal from '../../../../src/dal/notifications/update-notification.dal.js'
 
 // Thing under test
 import SendVerificationEmailService from '../../../../src/services/users/register/send-verification-email.service.js'
 
 describe('Users - Register - Send Verification Email service', () => {
-  const email = 'new.user@example.com'
-  const resetGuid = '6e7a6b97-f5c4-4c30-965e-ee67ee6d9f25'
-
   let createEmailRequestStub
+  let notification
   let notifierStub
+  let updateNotificationStub
 
   beforeEach(() => {
-    vi.replaceProperty(ServerConfig.domains, 'external', 'https://external.com')
+    notification = {
+      id: '0ac6a6d5-a0ea-4b46-8b3b-1d9b04d4e8a9',
+      messageRef: 'new_user_verification_email',
+      messageType: 'email',
+      personalisation: { link: 'https://external.com/link' },
+      recipient: 'new.user@example.com'
+    }
+
+    updateNotificationStub = vi.spyOn(UpdateNotificationDal, 'default').mockResolvedValue()
 
     // The service depends on GlobalNotifier to have been set. This happens in the GlobalNotifierPlugin when the app
     // starts up. As we're not creating an instance of Hapi server in this test we set it directly with our own stub
@@ -34,21 +42,43 @@ describe('Users - Register - Send Verification Email service', () => {
 
   describe('when the email is sent to Notify successfully', () => {
     beforeEach(() => {
-      createEmailRequestStub = vi.spyOn(CreateEmailRequest, 'default').mockResolvedValue({ succeeded: true })
+      createEmailRequestStub = vi.spyOn(CreateEmailRequest, 'default').mockResolvedValue({
+        response: {
+          body: {
+            content: { body: 'The email text' },
+            id: 'a8023182-5cb3-4ee3-b777-2fb82cde7fc5'
+          },
+          statusCode: 201
+        },
+        succeeded: true
+      })
     })
 
-    it('sends the email with the create password link', async () => {
-      await SendVerificationEmailService(email, resetGuid)
+    it('sends the email using the notification recipient and personalisation', async () => {
+      await SendVerificationEmailService(notification)
 
-      expect(createEmailRequestStub).toHaveBeenCalledWith('3d25b496-abbd-49bb-b943-016019082988', email, {
-        personalisation: {
-          link: `https://external.com/create-password?resetGuid=${resetGuid}`
+      expect(createEmailRequestStub).toHaveBeenCalledWith(
+        '3d25b496-abbd-49bb-b943-016019082988',
+        'new.user@example.com',
+        {
+          personalisation: { link: 'https://external.com/link' }
         }
+      )
+    })
+
+    it('records the result against the notification', async () => {
+      await SendVerificationEmailService(notification)
+
+      expect(updateNotificationStub).toHaveBeenCalledWith(notification, {
+        notifyId: 'a8023182-5cb3-4ee3-b777-2fb82cde7fc5',
+        notifyStatus: 'created',
+        plaintext: 'The email text',
+        status: 'pending'
       })
     })
 
     it('does not log an error', async () => {
-      await SendVerificationEmailService(email, resetGuid)
+      await SendVerificationEmailService(notification)
 
       expect(notifierStub.omfg).not.toHaveBeenCalled()
     })
@@ -56,17 +86,23 @@ describe('Users - Register - Send Verification Email service', () => {
 
   describe('when the request to Notify fails', () => {
     beforeEach(() => {
-      vi.spyOn(CreateEmailRequest, 'default').mockResolvedValue({ succeeded: false })
+      vi.spyOn(CreateEmailRequest, 'default').mockResolvedValue({
+        response: {
+          body: { errors: [{ error: 'BadRequestError', message: 'Missing personalisation: link' }] },
+          statusCode: 400
+        },
+        succeeded: false
+      })
     })
 
-    it('logs the error', async () => {
-      await SendVerificationEmailService(email, resetGuid)
+    it('records the error against the notification', async () => {
+      await SendVerificationEmailService(notification)
 
-      expect(notifierStub.omfg).toHaveBeenCalledWith(
-        'Failed when trying to send external user verification email',
-        { email },
-        expect.any(Error)
-      )
+      expect(updateNotificationStub).toHaveBeenCalledWith(notification, {
+        notifyError:
+          '{"errors":[{"error":"BadRequestError","message":"Missing personalisation: link"}],"message":"Request failed with status code 400","status":400}',
+        status: 'error'
+      })
     })
   })
 
@@ -76,11 +112,11 @@ describe('Users - Register - Send Verification Email service', () => {
     })
 
     it('logs the error', async () => {
-      await SendVerificationEmailService(email, resetGuid)
+      await SendVerificationEmailService(notification)
 
       expect(notifierStub.omfg).toHaveBeenCalledWith(
         'Failed when trying to send external user verification email',
-        { email },
+        { notification },
         expect.any(Error)
       )
     })

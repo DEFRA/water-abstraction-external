@@ -6,7 +6,9 @@
 import FetchSessionDal from 'water-abstraction-engine/dal/fetch-session.dal.js'
 import { formatEmail, formatValidationResult } from 'water-abstraction-engine/presenters/base.presenter.js'
 
+import CreateResetPasswordNotificationDal from '../../../dal/users/create-reset-password-notification.dal.js'
 import CreateUserDal from '../../../dal/users/create-user.dal.js'
+import CreateVerificationNotificationDal from '../../../dal/users/create-verification-notification.dal.js'
 import EmailPresenter from '../../../presenters/users/register/email.presenter.js'
 import EmailValidator from '../../../validators/users/register/email.validator.js'
 import FetchUserByEmailDal from '../../../dal/users/fetch-user-by-email.dal.js'
@@ -61,11 +63,17 @@ async function _createAccount(email) {
   if (existingUser) {
     const resetGuid = await UpdateResetGuidDal(existingUser.id)
 
-    SendResetPasswordEmailService(email, resetGuid)
+    const notification = await CreateResetPasswordNotificationDal(email, resetGuid)
+
+    // Intentionally not awaited — fire-and-forget with internal error handling
+    SendResetPasswordEmailService(notification)
   } else {
     const user = await CreateUserDal(email)
 
-    SendVerificationEmailService(email, user.resetGuid)
+    const notification = await CreateVerificationNotificationDal(email, user.resetGuid)
+
+    // Intentionally not awaited — fire-and-forget with internal error handling
+    SendVerificationEmailService(notification)
   }
 }
 

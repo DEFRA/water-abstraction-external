@@ -8,7 +8,9 @@ import { generateUUID } from 'water-abstraction-engine/test/generators.js'
 // Things we need to stub
 import * as FetchSessionDal from 'water-abstraction-engine/dal/fetch-session.dal.js'
 
+import * as CreateResetPasswordNotificationDal from '../../../../src/dal/users/create-reset-password-notification.dal.js'
 import * as CreateUserDal from '../../../../src/dal/users/create-user.dal.js'
+import * as CreateVerificationNotificationDal from '../../../../src/dal/users/create-verification-notification.dal.js'
 import * as FetchUserByEmailDal from '../../../../src/dal/users/fetch-user-by-email.dal.js'
 import * as SendResetPasswordEmailService from '../../../../src/services/users/register/send-reset-password-email.service.js'
 import * as SendVerificationEmailService from '../../../../src/services/users/register/send-verification-email.service.js'
@@ -20,7 +22,10 @@ import SubmitEmailService from '../../../../src/services/users/register/submit-e
 describe('Users - Register - Submit Email service', () => {
   const email = 'licences@bigfarm.co.uk'
 
+  let createResetPasswordNotificationStub
   let createUserStub
+  let createVerificationNotificationStub
+  let notification
   let fetchUserByEmailStub
   let payload
   let resetGuid
@@ -30,11 +35,18 @@ describe('Users - Register - Submit Email service', () => {
   let updateResetGuidStub
 
   beforeEach(() => {
+    notification = { id: generateUUID() }
     resetGuid = generateUUID()
     session = SessionModelStub({})
 
     vi.spyOn(FetchSessionDal, 'default').mockResolvedValue(session)
     createUserStub = vi.spyOn(CreateUserDal, 'default').mockResolvedValue({ resetGuid })
+    createResetPasswordNotificationStub = vi
+      .spyOn(CreateResetPasswordNotificationDal, 'default')
+      .mockResolvedValue(notification)
+    createVerificationNotificationStub = vi
+      .spyOn(CreateVerificationNotificationDal, 'default')
+      .mockResolvedValue(notification)
     fetchUserByEmailStub = vi.spyOn(FetchUserByEmailDal, 'default').mockResolvedValue(undefined)
     updateResetGuidStub = vi.spyOn(UpdateResetGuidDal, 'default').mockResolvedValue(resetGuid)
     sendResetPasswordEmailStub = vi.spyOn(SendResetPasswordEmailService, 'default').mockResolvedValue()
@@ -79,10 +91,12 @@ describe('Users - Register - Submit Email service', () => {
         expect(createUserStub).toHaveBeenCalledWith(email)
       })
 
-      it('sends the verification email', async () => {
+      it('creates the verification notification and sends the email', async () => {
         await SubmitEmailService(session.id, payload)
 
-        expect(sendVerificationEmailStub).toHaveBeenCalledWith(email, resetGuid)
+        expect(createVerificationNotificationStub).toHaveBeenCalledWith(email, resetGuid)
+        expect(sendVerificationEmailStub).toHaveBeenCalledWith(notification)
+        expect(createResetPasswordNotificationStub).not.toHaveBeenCalled()
         expect(sendResetPasswordEmailStub).not.toHaveBeenCalled()
       })
     })
@@ -98,11 +112,13 @@ describe('Users - Register - Submit Email service', () => {
         expect(createUserStub).not.toHaveBeenCalled()
       })
 
-      it('sets a new reset GUID and sends the reset password email', async () => {
+      it('sets a new reset GUID, creates the reset password notification and sends the email', async () => {
         await SubmitEmailService(session.id, payload)
 
         expect(updateResetGuidStub).toHaveBeenCalledWith(123)
-        expect(sendResetPasswordEmailStub).toHaveBeenCalledWith(email, resetGuid)
+        expect(createResetPasswordNotificationStub).toHaveBeenCalledWith(email, resetGuid)
+        expect(sendResetPasswordEmailStub).toHaveBeenCalledWith(notification)
+        expect(createVerificationNotificationStub).not.toHaveBeenCalled()
         expect(sendVerificationEmailStub).not.toHaveBeenCalled()
       })
 
@@ -131,6 +147,8 @@ describe('Users - Register - Submit Email service', () => {
       await SubmitEmailService(session.id, payload)
 
       expect(createUserStub).not.toHaveBeenCalled()
+      expect(createVerificationNotificationStub).not.toHaveBeenCalled()
+      expect(createResetPasswordNotificationStub).not.toHaveBeenCalled()
       expect(sendVerificationEmailStub).not.toHaveBeenCalled()
       expect(sendResetPasswordEmailStub).not.toHaveBeenCalled()
     })

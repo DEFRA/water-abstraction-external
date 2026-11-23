@@ -1,35 +1,39 @@
 /**
- * Sends the verification email to a newly registered external user
+ * Sends the verification email and records the result against its notification
  * @module SendVerificationEmailService
  */
 
 import CreateEmailRequest from 'water-abstraction-engine/requests/notify/create-email.request.js'
-import ServerConfig from 'water-abstraction-engine/config/server.config.js'
+
+import NotifyUpdatePresenter from '../../../presenters/notifications/notify-update.presenter.js'
+import UpdateNotificationDal from '../../../dal/notifications/update-notification.dal.js'
 
 // Legacy 'new_user_verification_email' template. TODO: move to NOTIFY_TEMPLATES in water-abstraction-engine
 const VERIFICATION_EMAIL_TEMPLATE_ID = '3d25b496-abbd-49bb-b943-016019082988'
 
 /**
- * Sends the verification email to a newly registered external user
+ * Sends the verification email and records the result against its notification
  *
- * The email contains a link with the user's reset GUID, which they use to set their password. Any errors are logged
- * rather than thrown.
+ * The result of the request to Notify is saved to the notification. Checking whether the email was delivered is left
+ * to the system notification status job, which picks up all pending notifications. Any errors are logged rather than
+ * thrown.
  *
- * @param {string} email - The email address of the user
- * @param {string} resetGuid - The user's reset GUID
+ * @param {object} notification - The notification linked to the email to be sent
  */
-export default async function sendVerificationEmailService(email, resetGuid) {
+export default async function sendVerificationEmailService(notification) {
   try {
-    const personalisation = {
-      link: `${ServerConfig.domains.external}/create-password?resetGuid=${resetGuid}`
-    }
+    const { personalisation, recipient } = notification
 
-    const result = await CreateEmailRequest(VERIFICATION_EMAIL_TEMPLATE_ID, email, { personalisation })
+    const notifyResult = await CreateEmailRequest(VERIFICATION_EMAIL_TEMPLATE_ID, recipient, { personalisation })
 
-    if (!result.succeeded) {
-      throw new Error('Notify request to send the verification email failed')
-    }
+    const sendResult = NotifyUpdatePresenter(notifyResult)
+
+    await UpdateNotificationDal(notification, sendResult)
   } catch (error) {
-    globalThis.GlobalNotifier.omfg('Failed when trying to send external user verification email', { email }, error)
+    globalThis.GlobalNotifier.omfg(
+      'Failed when trying to send external user verification email',
+      { notification },
+      error
+    )
   }
 }

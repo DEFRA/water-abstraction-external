@@ -1,38 +1,39 @@
 /**
- * Sends the reset password email to an external user who tried to register with an existing account
+ * Sends the reset password email and records the result against its notification
  * @module SendResetPasswordEmailService
  */
 
 import CreateEmailRequest from 'water-abstraction-engine/requests/notify/create-email.request.js'
-import ServerConfig from 'water-abstraction-engine/config/server.config.js'
+
+import NotifyUpdatePresenter from '../../../presenters/notifications/notify-update.presenter.js'
+import UpdateNotificationDal from '../../../dal/notifications/update-notification.dal.js'
 
 // Legacy 'existing_user_verification_email' template. TODO: move to NOTIFY_TEMPLATES in water-abstraction-engine
 const RESET_PASSWORD_TEMPLATE_ID = 'd9654596-a533-47e9-aa27-2cf869c6aa13'
 
 /**
- * Sends the reset password email to an external user who tried to register with an existing account
+ * Sends the reset password email and records the result against its notification
  *
- * The email tells the user they already have an account, with links to sign in or reset their password. Any errors
- * are logged rather than thrown.
+ * The result of the request to Notify is saved to the notification. Checking whether the email was delivered is left
+ * to the system notification status job, which picks up all pending notifications. Any errors are logged rather than
+ * thrown.
  *
- * @param {string} email - The email address of the user
- * @param {string} resetGuid - The user's reset GUID
+ * @param {object} notification - The notification linked to the email to be sent
  */
-export default async function sendResetPasswordEmailService(email, resetGuid) {
+export default async function sendResetPasswordEmailService(notification) {
   try {
-    const { external } = ServerConfig.domains
+    const { personalisation, recipient } = notification
 
-    const personalisation = {
-      link: `${external}/signin`,
-      resetLink: `${external}/reset_password_change_password?resetGuid=${resetGuid}`
-    }
+    const notifyResult = await CreateEmailRequest(RESET_PASSWORD_TEMPLATE_ID, recipient, { personalisation })
 
-    const result = await CreateEmailRequest(RESET_PASSWORD_TEMPLATE_ID, email, { personalisation })
+    const sendResult = NotifyUpdatePresenter(notifyResult)
 
-    if (!result.succeeded) {
-      throw new Error('Notify request to send the reset password email failed')
-    }
+    await UpdateNotificationDal(notification, sendResult)
   } catch (error) {
-    globalThis.GlobalNotifier.omfg('Failed when trying to send external user reset password email', { email }, error)
+    globalThis.GlobalNotifier.omfg(
+      'Failed when trying to send external user reset password email',
+      { notification },
+      error
+    )
   }
 }
