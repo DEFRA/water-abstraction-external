@@ -6,6 +6,7 @@
 
 import Joi from 'water-abstraction-engine/wrappers/joi.wrapper.js'
 
+const INVALID_EMAIL_MESSAGE = 'Enter an email address in the right format, for example, name@example.com'
 const MAX_LENGTH = 254
 
 /**
@@ -23,9 +24,9 @@ export default function emailValidator(payload) {
       .email()
       .required()
       .messages({
-        'any.required': 'Enter an email address in the right format, for example, name@example.com',
-        'string.email': 'Enter an email address in the right format, for example, name@example.com',
-        'string.empty': 'Enter an email address in the right format, for example, name@example.com',
+        'any.required': INVALID_EMAIL_MESSAGE,
+        'string.email': INVALID_EMAIL_MESSAGE,
+        'string.empty': INVALID_EMAIL_MESSAGE,
         'string.max': `Email address must be ${MAX_LENGTH} characters or less`
       })
   })
