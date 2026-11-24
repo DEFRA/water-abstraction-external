@@ -13,16 +13,14 @@ import { formatEmail } from 'water-abstraction-engine/presenters/base.presenter.
  * @returns {object} The data formatted for the view template
  */
 export default function emailPresenter(session) {
-  const { confirmEmail, email } = session
+  const { email } = session
 
   return {
     backLink: {
       href: '/ext/users/register',
       text: 'Back'
     },
-    confirmEmail: formatEmail(confirmEmail),
     email: formatEmail(email),
-    pageTitle: 'Enter your email address',
-    pageTitleCaption: 'Create an account'
+    pageTitle: 'Create an account'
   }
 }

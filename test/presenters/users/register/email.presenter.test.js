@@ -23,24 +23,8 @@ describe('Users - Register - Email presenter', () => {
           href: '/ext/users/register',
           text: 'Back'
         },
-        confirmEmail: null,
         email: null,
-        pageTitle: 'Enter your email address',
-        pageTitleCaption: 'Create an account'
-      })
-    })
-  })
-
-  describe('the "confirmEmail" property', () => {
-    describe('when a confirm email address has been saved', () => {
-      beforeEach(() => {
-        session.confirmEmail = 'Licences@BigFarm.co.uk'
-      })
-
-      it('returns the confirm email address in lowercase', () => {
-        const result = EmailPresenter(session)
-
-        expect(result.confirmEmail).toEqual('licences@bigfarm.co.uk')
+        pageTitle: 'Create an account'
       })
     })
   })

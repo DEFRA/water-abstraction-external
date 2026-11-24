@@ -15,7 +15,7 @@ export default function checkEmailPresenter(session) {
 
   return {
     email,
-    pageTitle: 'Check your email',
-    pageTitleCaption: 'Create an account'
+    pageTitle: 'Confirm your email address',
+    sendAgainLink: '/send-again'
   }
 }

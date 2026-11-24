@@ -26,13 +26,12 @@ describe('Users - Register - Submit Email service', () => {
 
   describe('when called with a valid payload', () => {
     beforeEach(() => {
-      payload = { confirmEmail: 'licences@bigfarm.co.uk', email: 'Licences@BigFarm.co.uk' }
+      payload = { email: 'Licences@BigFarm.co.uk' }
     })
 
     it('saves the submitted values', async () => {
       await SubmitEmailService(session.id, payload)
 
-      expect(session.confirmEmail).toEqual('licences@bigfarm.co.uk')
       expect(session.email).toEqual('licences@bigfarm.co.uk')
       expect(session.$update).toHaveBeenCalled()
     })
@@ -48,7 +47,7 @@ describe('Users - Register - Submit Email service', () => {
 
   describe('when validation fails', () => {
     beforeEach(() => {
-      payload = { confirmEmail: 'water@bigfarm.co.uk', email: 'licences@bigfarm.co.uk' }
+      payload = { email: 'big.farm' }
     })
 
     it('does not save the submitted values', async () => {
@@ -65,21 +64,19 @@ describe('Users - Register - Submit Email service', () => {
           href: '/ext/users/register',
           text: 'Back'
         },
-        confirmEmail: 'water@bigfarm.co.uk',
-        email: 'licences@bigfarm.co.uk',
+        email: 'big.farm',
         error: {
-          confirmEmail: {
-            text: 'Email addresses must match'
+          email: {
+            text: 'Enter an email address in the right format, for example, name@example.com'
           },
           errorList: [
             {
-              href: '#confirmEmail',
-              text: 'Email addresses must match'
+              href: '#email',
+              text: 'Enter an email address in the right format, for example, name@example.com'
             }
           ]
         },
-        pageTitle: 'Enter your email address',
-        pageTitleCaption: 'Create an account'
+        pageTitle: 'Create an account'
       })
     })
   })

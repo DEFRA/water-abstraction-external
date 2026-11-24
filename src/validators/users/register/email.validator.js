@@ -23,15 +23,11 @@ export default function emailValidator(payload) {
       .email()
       .required()
       .messages({
-        'any.required': 'Enter your email address',
+        'any.required': 'Enter an email address in the right format, for example, name@example.com',
         'string.email': 'Enter an email address in the right format, for example, name@example.com',
-        'string.empty': 'Enter your email address',
+        'string.empty': 'Enter an email address in the right format, for example, name@example.com',
         'string.max': `Email address must be ${MAX_LENGTH} characters or less`
-      }),
-    confirmEmail: Joi.string().empty('').required().valid(Joi.ref('email')).insensitive().messages({
-      'any.only': 'Email addresses must match',
-      'any.required': 'Confirm your email address'
-    })
+      })
   })
 
   return schema.validate(payload, { abortEarly: false })

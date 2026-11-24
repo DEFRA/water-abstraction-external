@@ -20,8 +20,8 @@ describe('Users - Register - Check Email presenter', () => {
 
       expect(result).toEqual({
         email: 'licences@bigfarm.co.uk',
-        pageTitle: 'Check your email',
-        pageTitleCaption: 'Create an account'
+        pageTitle: 'Confirm your email address',
+        sendAgainLink: '/send-again'
       })
     })
   })

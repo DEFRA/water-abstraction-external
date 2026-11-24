@@ -104,8 +104,8 @@ describe('User register controller', () => {
 
         vi.spyOn(ViewCheckEmailService, 'default').mockResolvedValue({
           email: 'licences@bigfarm.co.uk',
-          pageTitle: 'Check your email',
-          pageTitleCaption: 'Create an account'
+          pageTitle: 'Confirm your email address',
+          sendAgainLink: '/send-again'
         })
       })
 
@@ -113,7 +113,7 @@ describe('User register controller', () => {
         const response = await server.inject(options)
 
         expect(response.statusCode).toEqual(HTTP_STATUS_OK)
-        expect(response.payload).toContain('Check your email')
+        expect(response.payload).toContain('Confirm your email address')
         expect(response.payload).toContain('licences@bigfarm.co.uk')
       })
     })
@@ -134,7 +134,7 @@ describe('User register controller', () => {
         }
 
         vi.spyOn(ViewEmailService, 'default').mockResolvedValue({
-          pageTitle: 'Enter your email address'
+          pageTitle: 'Create an account'
         })
       })
 
@@ -142,7 +142,7 @@ describe('User register controller', () => {
         const response = await server.inject(options)
 
         expect(response.statusCode).toEqual(HTTP_STATUS_OK)
-        expect(response.payload).toContain('Enter your email address')
+        expect(response.payload).toContain('Create an account')
       })
     })
 
@@ -170,9 +170,11 @@ describe('User register controller', () => {
         beforeEach(() => {
           vi.spyOn(SubmitEmailService, 'default').mockResolvedValue({
             error: {
-              errorList: [{ href: '#email', text: 'Enter your email address' }]
+              errorList: [
+                { href: '#email', text: 'Enter an email address in the right format, for example, name@example.com' }
+              ]
             },
-            pageTitle: 'Enter your email address'
+            pageTitle: 'Create an account'
           })
         })
 
@@ -181,7 +183,7 @@ describe('User register controller', () => {
 
           expect(response.statusCode).toEqual(HTTP_STATUS_OK)
           expect(response.payload).toContain('There is a problem')
-          expect(response.payload).toContain('Enter your email address')
+          expect(response.payload).toContain('Enter an email address in the right format')
         })
       })
     })

@@ -32,10 +32,8 @@ describe('Users - Register - View Email service', () => {
           href: '/ext/users/register',
           text: 'Back'
         },
-        confirmEmail: null,
         email: null,
-        pageTitle: 'Enter your email address',
-        pageTitleCaption: 'Create an account'
+        pageTitle: 'Create an account'
       })
     })
   })
