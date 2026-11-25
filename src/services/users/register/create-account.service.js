@@ -19,12 +19,19 @@ import UpdateResetGuidDal from '../../../dal/users/update-reset-guid.dal.js'
  * to sign in or reset their password. Otherwise, the user is created and sent an email with the link to set up their
  * account.
  *
+ * If the existing account is disabled we do nothing, so no email is sent. The legacy IDM also refuses to send to a
+ * disabled user. The caller still shows the same check email page, so we do not reveal that the account exists.
+ *
  * The emails are sent in the background so the user is not kept waiting on Notify.
  *
  * @param {string} email - The formatted email address the user registered with
  */
 export default async function createAccountService(email) {
   const existingUser = await FetchUserByEmailDal(email)
+
+  if (existingUser && !existingUser.enabled) {
+    return
+  }
 
   if (existingUser) {
     const resetGuid = await UpdateResetGuidDal(existingUser.id)

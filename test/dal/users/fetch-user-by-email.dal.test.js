@@ -25,7 +25,41 @@ describe('Users - Fetch User By Email DAL', () => {
     it('returns the matching user', async () => {
       const result = await FetchUserByEmailDal(email)
 
-      expect(result).toEqual({ id: user.id })
+      expect(result).toEqual({ enabled: true, id: user.id })
+    })
+  })
+
+  describe('when an external user exists with the email address in a different case', () => {
+    let mixedCaseEmail
+    let mixedCaseUser
+
+    beforeAll(async () => {
+      mixedCaseEmail = generateExternalEmailAddress()
+
+      mixedCaseUser = await UserHelper.add({ application: 'water_vml', username: mixedCaseEmail.toUpperCase() })
+    })
+
+    it('returns the matching user', async () => {
+      const result = await FetchUserByEmailDal(mixedCaseEmail.toLowerCase())
+
+      expect(result).toEqual({ enabled: true, id: mixedCaseUser.id })
+    })
+  })
+
+  describe('when the matching external user is disabled', () => {
+    let disabledEmail
+    let disabledUser
+
+    beforeAll(async () => {
+      disabledEmail = generateExternalEmailAddress()
+
+      disabledUser = await UserHelper.add({ application: 'water_vml', enabled: false, username: disabledEmail })
+    })
+
+    it('returns the matching user flagged as not enabled', async () => {
+      const result = await FetchUserByEmailDal(disabledEmail)
+
+      expect(result).toEqual({ enabled: false, id: disabledUser.id })
     })
   })
 

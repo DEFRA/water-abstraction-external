@@ -75,9 +75,25 @@ describe('Users - Register - Create Account service', () => {
     })
   })
 
+  describe('when a disabled account already exists for the email address', () => {
+    beforeEach(() => {
+      fetchUserByEmailStub.mockResolvedValue({ enabled: false, id: 123 })
+    })
+
+    it('does not create the user, create a notification or send an email', async () => {
+      await CreateAccountService(email)
+
+      expect(createUserStub).not.toHaveBeenCalled()
+      expect(updateResetGuidStub).not.toHaveBeenCalled()
+      expect(createNotificationStub).not.toHaveBeenCalled()
+      expect(sendResetPasswordEmailStub).not.toHaveBeenCalled()
+      expect(sendVerificationEmailStub).not.toHaveBeenCalled()
+    })
+  })
+
   describe('when an account already exists for the email address', () => {
     beforeEach(() => {
-      fetchUserByEmailStub.mockResolvedValue({ id: 123 })
+      fetchUserByEmailStub.mockResolvedValue({ enabled: true, id: 123 })
     })
 
     it('does not create the user', async () => {
