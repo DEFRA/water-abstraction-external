@@ -35,7 +35,6 @@ export default async function submitEmailService(sessionId, payload) {
     }
   }
 
-  session.confirmEmail = payload.confirmEmail
   session.email = payload.email
 
   const pageData = EmailPresenter(session)
@@ -47,7 +46,6 @@ export default async function submitEmailService(sessionId, payload) {
 }
 
 async function _save(session, payload) {
-  session.confirmEmail = formatEmail(payload.confirmEmail)
   session.email = formatEmail(payload.email)
 
   return session.$update()

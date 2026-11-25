@@ -1,18 +1,6 @@
 {% extends 'layout.njk' %}
 
-{% from "govuk/components/button/macro.njk" import govukButton %}
-
 {% block pageContent %}
-  <p class="govuk-body">We've sent a link to <span class="govuk-!-font-weight-bold">{{ email }}</span>.</p>
-  <p class="govuk-body">Use the link in the email to finish creating your account. The link expires in 48 hours.</p>
-  <p class="govuk-body">The email can take a few minutes to arrive. If you cannot see it, check your spam or junk folder.</p>
-
-  <h2 class="govuk-heading-m">Not received the email?</h2>
-  <p class="govuk-body">Wait a few minutes before you ask for another link.</p>
-
-  <form novalidate method="post">
-    <input type="hidden" name="wrlsCrumb" value="{{ wrlsCrumb }}"/>
-
-    {{ govukButton({ text: "Resend link", classes: "govuk-button--secondary", preventDoubleClick: true }) }}
-  </form>
+  <p class="govuk-body">We have sent a link to <span class="govuk-!-font-weight-bold">{{ email }}</span></p>
+  <p class="govuk-body"><a class="govuk-link" href="{{ sendAgainLink }}">I have not received the email</a></p>
 {% endblock %}

@@ -4,23 +4,20 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% block pageContent %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <p class="govuk-body">You must be a licence holder to create an online account. Once registered you will be able to:</p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>view your abstraction licence information</li>
-        <li>submit abstraction returns</li>
-        <li>give others access to your account and permission to submit returns</li>
-      </ul>
-      <p class="govuk-body">To protect your data we have to post a security code to the registered address of the licence.</p>
-      {{ govukInsetText({ text: "We will send a security code to you straight away, using first-class mail." }) }}
-      <p class="govuk-body">Impoundment licences are not yet part of this service.</p>
-      <h2 class="govuk-heading-m">Before you start</h2>
-      <p class="govuk-body">You will need:</p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>an email address</li>
-      </ul>
-      {{ govukButton({ text: "Start", href: "/ext/users/register/setup", isStartButton: true }) }}
-    </div>
-  </div>
+  <p class="govuk-body">You must be a licence holder to create an online account. Once registered you will be able to:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>view your abstraction licence information</li>
+    <li>submit abstraction returns</li>
+    <li>give others access to your account and permission to submit returns</li>
+  </ul>
+  <p class="govuk-body">To protect your data we have to post a security code to the registered address of the licence.</p>
+  {{ govukInsetText({ text: "We will send a security code to you straight away, using first-class mail." }) }}
+  <p class="govuk-body">Impoundment licences are not yet part of this service.</p>
+  <h2 class="govuk-heading-m">Before you start</h2>
+  <p class="govuk-body">You will need:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>an email address</li>
+    <li>your licence numbers</li>
+  </ul>
+  {{ govukButton({ text: "Create account", href: "/ext/users/register/setup", isStartButton: true }) }}
 {% endblock %}
