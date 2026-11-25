@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Test helpers
 import GlobalNotifierStub from 'water-abstraction-engine/test/stubs/global-notifier.stub.js'
+import { generateUUID } from 'water-abstraction-engine/test/generators.js'
 
 // Things we need to stub
 import * as CreateEmailRequest from 'water-abstraction-engine/requests/notify/create-email.request.js'
@@ -15,11 +16,14 @@ describe('Users - Register - Send Reset Password Email service', () => {
   let createEmailRequestStub
   let notification
   let notifierStub
+  let notifyId
   let updateNotificationStub
 
   beforeEach(() => {
+    notifyId = generateUUID()
+
     notification = {
-      id: '0ac6a6d5-a0ea-4b46-8b3b-1d9b04d4e8a9',
+      id: generateUUID(),
       messageRef: 'existing_user_verification_email',
       messageType: 'email',
       personalisation: { link: 'https://external.com/link' },
@@ -45,7 +49,7 @@ describe('Users - Register - Send Reset Password Email service', () => {
         response: {
           body: {
             content: { body: 'The email text' },
-            id: 'a8023182-5cb3-4ee3-b777-2fb82cde7fc5'
+            id: notifyId
           },
           statusCode: 201
         },
@@ -69,7 +73,7 @@ describe('Users - Register - Send Reset Password Email service', () => {
       await SendResetPasswordEmailService(notification)
 
       expect(updateNotificationStub).toHaveBeenCalledWith(notification, {
-        notifyId: 'a8023182-5cb3-4ee3-b777-2fb82cde7fc5',
+        notifyId,
         notifyStatus: 'created',
         plaintext: 'The email text',
         status: 'pending'
