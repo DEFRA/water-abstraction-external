@@ -6,8 +6,10 @@
 
 import {
   setup,
+  submitCreatePassword,
   submitEmail,
   viewCheckEmail,
+  viewCreatePassword,
   viewEmail,
   viewRegister
 } from '../../controllers/users/register.controller.js'
@@ -52,5 +54,21 @@ export default [
       handler: viewCheckEmail
     },
     path: '/users/register/{sessionId}/check-email'
+  },
+  {
+    method: 'GET',
+    options: {
+      auth: false,
+      handler: viewCreatePassword
+    },
+    path: '/users/register/{sessionId}/create-password'
+  },
+  {
+    method: 'POST',
+    options: {
+      auth: false,
+      handler: submitCreatePassword
+    },
+    path: '/users/register/{sessionId}/create-password'
   }
 ]

@@ -9,8 +9,10 @@ import { generateUUID } from 'water-abstraction-engine/test/generators.js'
 
 // Things we need to stub
 import * as InitiateSessionService from '../../../src/services/users/register/initiate-session.service.js'
+import * as SubmitCreatePasswordService from '../../../src/services/users/register/submit-create-password.service.js'
 import * as SubmitEmailService from '../../../src/services/users/register/submit-email.service.js'
 import * as ViewCheckEmailService from '../../../src/services/users/register/view-check-email.service.js'
+import * as ViewCreatePasswordService from '../../../src/services/users/register/view-create-password.service.js'
 import * as ViewEmailService from '../../../src/services/users/register/view-email.service.js'
 import * as ViewRegisterService from '../../../src/services/users/register/view-register.service.js'
 
@@ -115,6 +117,51 @@ describe('User register controller', () => {
         expect(response.statusCode).toEqual(HTTP_STATUS_OK)
         expect(response.payload).toContain('Confirm your email address')
         expect(response.payload).toContain('licences@bigfarm.co.uk')
+      })
+    })
+  })
+
+  describe('/users/register/{sessionId}/create-password', () => {
+    let sessionId
+
+    beforeEach(() => {
+      sessionId = generateUUID()
+    })
+
+    describe('GET', () => {
+      beforeEach(() => {
+        options = {
+          method: 'GET',
+          url: `/users/register/${sessionId}/create-password`
+        }
+
+        vi.spyOn(ViewCreatePasswordService, 'default').mockReturnValue({
+          pageTitle: 'Create a password'
+        })
+      })
+
+      it('returns the page successfully', async () => {
+        const response = await server.inject(options)
+
+        expect(response.statusCode).toEqual(HTTP_STATUS_OK)
+        expect(response.payload).toContain('Create a password')
+      })
+    })
+
+    describe('POST', () => {
+      beforeEach(() => {
+        options = postRequestOptions(`/users/register/${sessionId}/create-password`, {}, null)
+
+        vi.spyOn(SubmitCreatePasswordService, 'default').mockReturnValue({
+          redirectUrl: `/ext/users/register/${sessionId}/account-created`
+        })
+      })
+
+      it('redirects to the account created page', async () => {
+        const response = await server.inject(options)
+
+        expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
+        expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/account-created`)
       })
     })
   })
