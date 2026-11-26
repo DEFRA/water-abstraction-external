@@ -6,6 +6,7 @@
 
 import {
   setup,
+  setupCreatePassword,
   submitCreatePassword,
   submitEmail,
   viewCheckEmail,
@@ -30,6 +31,14 @@ export default [
       handler: setup
     },
     path: '/users/register/setup'
+  },
+  {
+    method: 'GET',
+    options: {
+      auth: false,
+      handler: setupCreatePassword
+    },
+    path: '/users/register/setup/create-password/{resetGuid}'
   },
   {
     method: 'GET',

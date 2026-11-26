@@ -15,8 +15,8 @@ import { generateUUID } from 'water-abstraction-engine/lib/general.lib.js'
  * The `password` is a hashed random UUID that nobody knows, so the account cannot be signed in to until the user sets
  * their own password.
  *
- * The `resetGuid` identifies the user when they follow the create password link (`/create-password?resetGuid=...`) in
- * the verification email.
+ * The `resetGuid` identifies the user when they follow the create password link
+ * (`/ext/users/register/setup/create-password/{resetGuid}`) in the verification email.
  *
  * The `resetRequired` flag is set to 1 to mark that the user still has to set their own password. If a user with it
  * set signs in, legacy sends them to the change password page instead of signing them in. Setting the password with the

@@ -5,6 +5,7 @@
  */
 
 import InitiateSessionService from '../../services/users/register/initiate-session.service.js'
+import SetupCreatePasswordService from '../../services/users/register/setup-create-password.service.js'
 import SubmitCreatePasswordService from '../../services/users/register/submit-create-password.service.js'
 import SubmitEmailService from '../../services/users/register/submit-email.service.js'
 import ViewCheckEmailService from '../../services/users/register/view-check-email.service.js'
@@ -16,6 +17,16 @@ export async function setup(_request, h) {
   const session = await InitiateSessionService()
 
   return h.redirect(`/ext/users/register/${session.id}/email`)
+}
+
+export async function setupCreatePassword(request, h) {
+  const {
+    params: { resetGuid }
+  } = request
+
+  const pageData = await SetupCreatePasswordService(resetGuid)
+
+  return h.redirect(pageData.redirectUrl)
 }
 
 export async function submitCreatePassword(request, h) {

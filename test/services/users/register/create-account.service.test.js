@@ -66,7 +66,7 @@ describe('Users - Register - Create Account service', () => {
         messageRef: 'new_user_verification_email',
         messageType: 'email',
         personalisation: {
-          link: `${domains.external}/create-password?resetGuid=${resetGuid}`
+          link: `${domains.external}/ext/users/register/setup/create-password/${resetGuid}`
         },
         recipient: email
       })
