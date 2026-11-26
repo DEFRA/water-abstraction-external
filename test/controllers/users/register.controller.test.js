@@ -8,8 +8,8 @@ import { postRequestOptions } from 'water-abstraction-engine/test/general.js'
 import { generateUUID } from 'water-abstraction-engine/test/generators.js'
 
 // Things we need to stub
+import * as InitiateCreatePasswordSessionService from '../../../src/services/users/register/initiate-create-password-session.service.js'
 import * as InitiateSessionService from '../../../src/services/users/register/initiate-session.service.js'
-import * as SetupCreatePasswordService from '../../../src/services/users/register/setup-create-password.service.js'
 import * as SubmitCreatePasswordService from '../../../src/services/users/register/submit-create-password.service.js'
 import * as SubmitEmailService from '../../../src/services/users/register/submit-email.service.js'
 import * as ViewCheckEmailService from '../../../src/services/users/register/view-check-email.service.js'
@@ -105,7 +105,7 @@ describe('User register controller', () => {
           url: `/users/register/setup/create-password/${resetGuid}`
         }
 
-        vi.spyOn(SetupCreatePasswordService, 'default').mockResolvedValue({
+        vi.spyOn(InitiateCreatePasswordSessionService, 'default').mockResolvedValue({
           redirectUrl: `/ext/users/register/${sessionId}/create-password`
         })
       })
@@ -113,7 +113,7 @@ describe('User register controller', () => {
       it('redirects to the URL returned by the service', async () => {
         const response = await server.inject(options)
 
-        expect(SetupCreatePasswordService.default).toHaveBeenCalledWith(resetGuid)
+        expect(InitiateCreatePasswordSessionService.default).toHaveBeenCalledWith(resetGuid)
         expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
         expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/create-password`)
       })

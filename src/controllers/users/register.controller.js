@@ -4,8 +4,8 @@
  * @module RegisterController
  */
 
+import InitiateCreatePasswordSessionService from '../../services/users/register/initiate-create-password-session.service.js'
 import InitiateSessionService from '../../services/users/register/initiate-session.service.js'
-import SetupCreatePasswordService from '../../services/users/register/setup-create-password.service.js'
 import SubmitCreatePasswordService from '../../services/users/register/submit-create-password.service.js'
 import SubmitEmailService from '../../services/users/register/submit-email.service.js'
 import ViewCheckEmailService from '../../services/users/register/view-check-email.service.js'
@@ -24,7 +24,7 @@ export async function setupCreatePassword(request, h) {
     params: { resetGuid }
   } = request
 
-  const pageData = await SetupCreatePasswordService(resetGuid)
+  const pageData = await InitiateCreatePasswordSessionService(resetGuid)
 
   return h.redirect(pageData.redirectUrl)
 }
