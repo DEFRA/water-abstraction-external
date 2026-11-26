@@ -31,10 +31,15 @@ export async function setupCreatePassword(request, h) {
 
 export async function submitCreatePassword(request, h) {
   const {
+    payload,
     params: { sessionId }
   } = request
 
-  const pageData = SubmitCreatePasswordService(sessionId)
+  const pageData = await SubmitCreatePasswordService(sessionId, payload)
+
+  if (pageData.error) {
+    return h.view('users/register/create-password.njk', pageData)
+  }
 
   return h.redirect(pageData.redirectUrl)
 }
@@ -64,8 +69,12 @@ export async function viewCheckEmail(request, h) {
   return h.view('users/register/check-email.njk', pageData)
 }
 
-export async function viewCreatePassword(_request, h) {
-  const pageData = ViewCreatePasswordService()
+export async function viewCreatePassword(request, h) {
+  const {
+    params: { sessionId }
+  } = request
+
+  const pageData = await ViewCreatePasswordService(sessionId)
 
   return h.view('users/register/create-password.njk', pageData)
 }
