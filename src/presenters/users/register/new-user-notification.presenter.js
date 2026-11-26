@@ -22,7 +22,7 @@ export default function newUserNotificationPresenter(email, resetGuid) {
     messageRef: 'new_user_verification_email',
     messageType: 'email',
     personalisation: {
-      link: `${external}/create-password?resetGuid=${resetGuid}`
+      link: `${external}/ext/users/register/setup/create-password/${resetGuid}`
     },
     recipient: email
   }
