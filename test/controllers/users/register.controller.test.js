@@ -165,7 +165,7 @@ describe('User register controller', () => {
           url: `/users/register/${sessionId}/create-password`
         }
 
-        vi.spyOn(ViewCreatePasswordService, 'default').mockReturnValue({
+        vi.spyOn(ViewCreatePasswordService, 'default').mockResolvedValue({
           pageTitle: 'Create a password'
         })
       })
@@ -181,17 +181,40 @@ describe('User register controller', () => {
     describe('POST', () => {
       beforeEach(() => {
         options = postRequestOptions(`/users/register/${sessionId}/create-password`, {}, null)
+      })
 
-        vi.spyOn(SubmitCreatePasswordService, 'default').mockReturnValue({
-          redirectUrl: `/ext/users/register/${sessionId}/account-created`
+      describe('when a request is valid', () => {
+        beforeEach(() => {
+          vi.spyOn(SubmitCreatePasswordService, 'default').mockResolvedValue({
+            redirectUrl: '/signin'
+          })
+        })
+
+        it('redirects to the sign in page', async () => {
+          const response = await server.inject(options)
+
+          expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
+          expect(response.headers.location).toEqual('/signin')
         })
       })
 
-      it('redirects to the account created page', async () => {
-        const response = await server.inject(options)
+      describe('when a request is invalid', () => {
+        beforeEach(() => {
+          vi.spyOn(SubmitCreatePasswordService, 'default').mockResolvedValue({
+            error: {
+              errorList: [{ href: '#confirmPassword', text: 'Passwords must match' }]
+            },
+            pageTitle: 'Create a password'
+          })
+        })
 
-        expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
-        expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/account-created`)
+        it('re-renders the page with an error message', async () => {
+          const response = await server.inject(options)
+
+          expect(response.statusCode).toEqual(HTTP_STATUS_OK)
+          expect(response.payload).toContain('There is a problem')
+          expect(response.payload).toContain('Passwords must match')
+        })
       })
     })
   })
