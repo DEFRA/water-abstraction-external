@@ -7,10 +7,13 @@ import SessionModelStub from 'water-abstraction-engine/test/stubs/session.stub.j
 // Things we need to stub
 import * as FetchSessionDal from 'water-abstraction-engine/dal/fetch-session.dal.js'
 
+import * as CreateAccountService from '../../../../src/services/users/register/create-account.service.js'
+
 // Thing under test
 import SubmitEmailService from '../../../../src/services/users/register/submit-email.service.js'
 
 describe('Users - Register - Submit Email service', () => {
+  let createAccountStub
   let payload
   let session
 
@@ -18,6 +21,7 @@ describe('Users - Register - Submit Email service', () => {
     session = SessionModelStub({})
 
     vi.spyOn(FetchSessionDal, 'default').mockResolvedValue(session)
+    createAccountStub = vi.spyOn(CreateAccountService, 'default').mockResolvedValue()
   })
 
   afterEach(() => {
@@ -34,6 +38,12 @@ describe('Users - Register - Submit Email service', () => {
 
       expect(session.email).toEqual('licences@bigfarm.co.uk')
       expect(session.$update).toHaveBeenCalled()
+    })
+
+    it('creates the account for the formatted email address', async () => {
+      await SubmitEmailService(session.id, payload)
+
+      expect(createAccountStub).toHaveBeenCalledWith('licences@bigfarm.co.uk')
     })
 
     it('redirects to the check email page', async () => {
@@ -54,6 +64,12 @@ describe('Users - Register - Submit Email service', () => {
       await SubmitEmailService(session.id, payload)
 
       expect(session.$update).not.toHaveBeenCalled()
+    })
+
+    it('does not create the account', async () => {
+      await SubmitEmailService(session.id, payload)
+
+      expect(createAccountStub).not.toHaveBeenCalled()
     })
 
     it('returns page data for the view, with errors', async () => {
