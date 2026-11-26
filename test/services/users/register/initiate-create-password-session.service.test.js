@@ -27,14 +27,18 @@ describe('Users - Register - Initiate Create Password Session service', () => {
   })
 
   describe('when a user has the reset GUID', () => {
+    let user
+
     beforeEach(() => {
-      vi.spyOn(FetchUserByResetGuidDal, 'default').mockResolvedValue({ id: generateUUID() })
+      user = { id: generateUUID() }
+
+      vi.spyOn(FetchUserByResetGuidDal, 'default').mockResolvedValue(user)
     })
 
-    it('creates a session containing the reset GUID', async () => {
+    it('creates a session containing the user', async () => {
       await InitiateCreatePasswordSessionService(resetGuid)
 
-      expect(CreateSessionDal.default).toHaveBeenCalledWith({ resetGuid })
+      expect(CreateSessionDal.default).toHaveBeenCalledWith({ user })
     })
 
     it('returns the redirect URL for the create password page', async () => {
@@ -49,10 +53,10 @@ describe('Users - Register - Initiate Create Password Session service', () => {
       vi.spyOn(FetchUserByResetGuidDal, 'default').mockResolvedValue(undefined)
     })
 
-    it('creates a session containing the reset GUID', async () => {
+    it('creates a session without a user', async () => {
       await InitiateCreatePasswordSessionService(resetGuid)
 
-      expect(CreateSessionDal.default).toHaveBeenCalledWith({ resetGuid })
+      expect(CreateSessionDal.default).toHaveBeenCalledWith({ user: undefined })
     })
 
     it('returns the redirect URL for the enter email page', async () => {
