@@ -21,10 +21,11 @@ export async function setup(_request, h) {
 
 export async function setupCreatePassword(request, h) {
   const {
-    params: { resetGuid }
+    params: { resetGuid },
+    yar
   } = request
 
-  const pageData = await InitiateCreatePasswordSessionService(resetGuid)
+  const pageData = await InitiateCreatePasswordSessionService(resetGuid, yar)
 
   return h.redirect(pageData.redirectUrl)
 }
@@ -81,10 +82,11 @@ export async function viewCreatePassword(request, h) {
 
 export async function viewEmail(request, h) {
   const {
-    params: { sessionId }
+    params: { sessionId },
+    yar
   } = request
 
-  const pageData = await ViewEmailService(sessionId)
+  const pageData = await ViewEmailService(sessionId, yar)
 
   return h.view('users/register/email.njk', pageData)
 }

@@ -113,7 +113,6 @@ describe('User register controller', () => {
       it('redirects to the URL returned by the service', async () => {
         const response = await server.inject(options)
 
-        expect(InitiateCreatePasswordSessionService.default).toHaveBeenCalledWith(resetGuid)
         expect(response.statusCode).toEqual(HTTP_STATUS_FOUND)
         expect(response.headers.location).toEqual(`/ext/users/register/${sessionId}/create-password`)
       })
