@@ -8,7 +8,7 @@ import { flashNotification } from 'water-abstraction-engine/lib/general.lib.js'
 
 import FetchUserByResetGuidDal from '../../../dal/users/fetch-user-by-reset-guid.dal.js'
 
-const LINK_EXPIRY_IN_MILLISECONDS = 48 * 60 * 60 * 1000
+const LINK_EXPIRY_IN_HOURS = 48
 
 /**
  * Initiates the session record used for a new user creating their password
@@ -37,7 +37,11 @@ export default async function initiateCreatePasswordSessionService(resetGuid, ya
   const session = await CreateSessionDal({ user })
 
   if (!user || _expired(user.resetGuidCreatedAt)) {
-    flashNotification(yar, 'Link expired', 'Links only work for 48 hours, and only the most recent link we sent works.')
+    flashNotification(
+      yar,
+      'Link expired',
+      `Links only work for ${LINK_EXPIRY_IN_HOURS} hours, and only the most recent link we sent works.`
+    )
 
     return {
       redirectUrl: `/ext/users/register/${session.id}/email`
@@ -54,5 +58,9 @@ function _expired(resetGuidCreatedAt) {
     return true
   }
 
-  return Date.now() - resetGuidCreatedAt.getTime() > LINK_EXPIRY_IN_MILLISECONDS
+  const expiresAt = new Date(resetGuidCreatedAt)
+
+  expiresAt.setHours(expiresAt.getHours() + LINK_EXPIRY_IN_HOURS)
+
+  return new Date() > expiresAt
 }
