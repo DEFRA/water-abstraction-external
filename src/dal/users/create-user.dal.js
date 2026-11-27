@@ -4,7 +4,7 @@
  */
 
 import UserModel from 'water-abstraction-engine/models/user.model.js'
-import { generateUUID } from 'water-abstraction-engine/lib/general.lib.js'
+import { generateUUID, timestampForPostgres } from 'water-abstraction-engine/lib/general.lib.js'
 
 /**
  * Create a user
@@ -16,7 +16,8 @@ import { generateUUID } from 'water-abstraction-engine/lib/general.lib.js'
  * their own password.
  *
  * The `resetGuid` identifies the user when they follow the create password link
- * (`/ext/users/register/setup/create-password/{resetGuid}`) in the verification email.
+ * (`/ext/users/register/setup/create-password/{resetGuid}`) in the verification email. The `resetGuidCreatedAt` is
+ * stamped with it, because the link expires 48 hours after it was created. Legacy never sets it.
  *
  * The `resetRequired` flag is set to 1 to mark that the user still has to set their own password. If a user with it
  * set signs in, legacy sends them to the change password page instead of signing them in. Setting the password with the
@@ -31,6 +32,7 @@ export default async function createUserDal(email) {
     application: 'water_vml',
     password: UserModel.generateHashedPassword(generateUUID()),
     resetGuid: generateUUID(),
+    resetGuidCreatedAt: timestampForPostgres(),
     resetRequired: 1,
     role: {
       scopes: ['external']

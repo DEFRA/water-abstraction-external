@@ -10,19 +10,21 @@ import FetchUserByResetGuidDal from '../../../src/dal/users/fetch-user-by-reset-
 
 describe('Users - Fetch User By Reset GUID DAL', () => {
   describe('when an external user has the reset GUID', () => {
+    const resetGuidCreatedAt = new Date('2026-11-25T10:00:00.000Z')
+
     let resetGuid
     let user
 
     beforeAll(async () => {
       resetGuid = generateUUID()
 
-      user = await UserHelper.add({ application: 'water_vml', resetGuid })
+      user = await UserHelper.add({ application: 'water_vml', resetGuid, resetGuidCreatedAt })
     })
 
-    it('returns the matching user', async () => {
+    it('returns the matching user, their username and when their reset GUID was created', async () => {
       const result = await FetchUserByResetGuidDal(resetGuid)
 
-      expect(result).toEqual({ id: user.id })
+      expect(result).toEqual({ id: user.id, resetGuidCreatedAt, username: user.username })
     })
   })
 
